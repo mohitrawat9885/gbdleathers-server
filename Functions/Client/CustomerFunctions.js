@@ -1,12 +1,12 @@
-const categorys = require("../Models/categoryModel");
-const contactus = require("../Models/contactUsModel");
-const crafts = require("../Models/craftModel");
-const customers = require("../Models/customerModel");
-const customProducts = require("../Models/customProductModel");
-const newOrders = require("../Models/newOrderModel");
-const participants = require("../Models/participantsModel");
+const categorys = require("../../Models/categoryModel");
+const contactus = require("../../Models/contactUsModel");
+const crafts = require("../../Models/craftModel");
+const customers = require("../../Models/customerModel");
+const customProducts = require("../../Models/customProductModel");
+const newOrders = require("../../Models/newOrderModel");
+const participants = require("../../Models/participantsModel");
 // const users = require("../Models/userModel");
-const workshops = require("../Models/workshopModel");
+const workshops = require("../../Models/workshopModel");
 
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
@@ -18,7 +18,7 @@ function isEmpty(obj) {
 }
 
 const signToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
+  return jwt.sign({ id }, process.env.JWT_SECRET_CLIENT, {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 };

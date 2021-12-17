@@ -5,7 +5,7 @@ const app = express();
 //const cors = require("cors");
 
 const AdminRoutes = require("./Routes/AdminRoutes");
-const CustomerRoutes = require("./Routes/CustomerRoutes");
+// const CustomerRoutes = require("./Routes/CustomerRoutes");
 
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -18,6 +18,6 @@ app.get("/", (req, res) => {
 });
 
 app.use("/admin", AdminRoutes);
-app.use("/customer", CustomerRoutes);
+// app.use("/customer", CustomerRoutes);
 
 module.exports = app;

@@ -1,6 +1,6 @@
 const express = require("express");
-const CustomerFunctions = require("../Functions/CustomerFunctions");
-const Functions = require("../Functions/Functions");
+const CustomerFunctions = require("../Functions/Client/CustomerFunctions");
+const ClientAuthentication = require("../Functions/Client/ClientAuthentication");
 const router = express.Router();
 
 //Send All Categorys
@@ -26,17 +26,19 @@ router.route("/resetpassword").post(CustomerFunctions.resetPassword);
 //END Customer SignUp functions ********************** //
 router
   .route("/addcusaddress")
-  .post(Functions.checkToken, CustomerFunctions.addCusAddress);
+  .post(ClientAuthentication.checkTokenClient, CustomerFunctions.addCusAddress);
 
-router.route("/address").post(Functions.checkToken, CustomerFunctions.address);
+router
+  .route("/address")
+  .post(ClientAuthentication.checkTokenClient, CustomerFunctions.address);
 
 router
   .route("/checkout")
-  .post(Functions.checkToken, CustomerFunctions.checkOut);
+  .post(ClientAuthentication.checkTokenClient, CustomerFunctions.checkOut);
 
 router
   .route("/getmyorders")
-  .post(Functions.checkToken, CustomerFunctions.getMyOrdrs);
+  .post(ClientAuthentication.checkTokenClient, CustomerFunctions.getMyOrdrs);
 
 router.route("/getallworkshops").post(CustomerFunctions.getAllWorkshops);
 router
@@ -60,10 +62,16 @@ router
 
 router
   .route("/uploadcustomproduct")
-  .post(Functions.checkToken, CustomerFunctions.uploadCustomProduct);
+  .post(
+    ClientAuthentication.checkTokenClient,
+    CustomerFunctions.uploadCustomProduct
+  );
 
 router
   .route("/contactussubmit")
-  .post(Functions.checkToken, CustomerFunctions.contactUsSubmit);
+  .post(
+    ClientAuthentication.checkTokenClient,
+    CustomerFunctions.contactUsSubmit
+  );
 
 module.exports = router;

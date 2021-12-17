@@ -1,20 +1,29 @@
 const mongoose = require("mongoose");
 
-const categorysSchema = new mongoose.Schema({
+const CategorySchema = new mongoose.Schema({
   admin_id: {
     type: String,
     require: true,
   },
-  category: {
+  name: {
     type: String,
-    require: false,
+    require: true,
   },
-  image_name: {
+  image: {
     type: String,
     require: false,
+    default: "gbdleathers_category_image.png",
+  },
+  created_at: {
+    type: Date,
+    default: Date.now,
+  },
+  updated_at: {
+    type: Date,
+    default: Date.now,
   },
 });
 
-const categorys = mongoose.model("categorys", categorysSchema);
+const Categorys = mongoose.model("Categorys", CategorySchema);
 
-module.exports = categorys;
+module.exports = Categorys;

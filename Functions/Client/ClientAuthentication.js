@@ -1,7 +1,7 @@
 const { promisify } = require("util");
 const jwt = require("jsonwebtoken");
 
-exports.checkToken = async (req, res, next) => {
+exports.checkTokenClient = async (req, res, next) => {
   try {
     //console.log("Header ", req.headers);
     let token;
@@ -21,13 +21,13 @@ exports.checkToken = async (req, res, next) => {
     }
     const decodedToken = await promisify(jwt.verify)(
       token,
-      process.env.JWT_SECRET
+      process.env.JWT_SECRET_CLIENT
     );
 
     req.body.id = decodedToken.id;
     next();
   } catch (err) {
-    console.log("Token Error");
+    console.log("Client Token Error");
     res.status(400).json({
       status: "error",
       message: "Internal Server Error",
