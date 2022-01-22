@@ -1,57 +1,35 @@
-const mongoose = require("mongoose");
-const fs = require("fs");
-const dotenv = require("dotenv");
-dotenv.config({ path: "./config.env" });
-const app = require("./app");
-const DB = process.env.DATABASE_LOCAL;
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
 
-mongoose
-  .connect(DB, {
-    //useCreateIndex: true,
-    useUnifiedTopology: true,
-    useNewUrlParser: true,
-  })
-  .then((con) => {
-    console.log("😎😎Database Connected");
-  })
-  .catch((err) => {
-    console.log("🙄🙄Error Connecting Database");
-    console.log(err);
+process.on('uncaughtException', (err) => {
+  console.log('UNCAUGHT EXCEPTION ☠️☠️☠️ Shutting down...');
+  console.log(err.name, err.message);
+  process.exit(1);
+});
+
+dotenv.config({
+  path: './config.env',
+});
+
+const app = require('./app');
+// const DB = process.env.DATABASE.replace(
+//   '<PASSWORD>',
+//   process.env.DATABASE_PASSWORD
+// );
+
+mongoose.connect(process.env.DATABASE_LOCAL).then(() => {
+  console.log('Database Connected Successfully!');
+});
+
+const PORT = process.env.PORT || 3000;
+const server = app.listen(PORT, () => {
+  console.log(`Server started at Port: ${PORT}`);
+});
+
+process.on('unhandledRejection', (err) => {
+  console.log('UNHANDLED REJECTION ☠️☠️☠️ Shutting down...');
+  console.log(err.name, err.message);
+  server.close(() => {
+    process.exit(1);
   });
-
-const PORT = process.env.PORT || 8000;
-
-if (process.env.NODE_ENV === "production") {
-  const privateKey = fs.readFileSync(
-    "/etc/letsencrypt/live/gbdhandwork.com/privkey.pem",
-    "utf8"
-  );
-  const certificate = fs.readFileSync(
-    "/etc/letsencrypt/live/gbdhandwork.com/cert.pem",
-    "utf8"
-  );
-  const ca = fs.readFileSync(
-    "/etc/letsencrypt/live/gbdhandwork.com/chain.pem",
-    "utf8"
-  );
-  const credentials = {
-    key: privateKey,
-    cert: certificate,
-    ca: ca,
-  };
-  https.createServer(credentials, app).listen(443, () => {
-    console.log("HTTPS Server running on port 443");
-  });
-  http
-    .createServer(function (req, res) {
-      res.writeHead(301, {
-        Location: "https://" + req.headers["host"] + req.url,
-      });
-      res.end();
-    })
-    .listen(80);
-} else if (process.env.NODE_ENV === "development") {
-  app.listen(PORT, () => console.log(`Listening at Port ${PORT}`));
-} else {
-  app.listen(PORT, () => console.log(`Listening at Port ${PORT}`));
-}
+});
