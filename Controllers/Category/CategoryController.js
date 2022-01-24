@@ -30,7 +30,7 @@ exports.resizeCategoryImage = catchAsync(async (req, re, next) => {
     .resize(500, 500)
     .toFormat('jpeg')
     .jpeg({ quality: 90 })
-    .toFile(`./public/img/${req.file.filename}`);
+    .toFile(`./public/images/${req.file.filename}`);
   req.body.image = req.file.filename;
   next();
 });

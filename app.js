@@ -21,6 +21,10 @@ const app = express();
 app.enable('trust proxy');
 app.use(cors());
 app.options('*', cors());
+
+// Serving Static files
+app.use(express.static(path.join(__dirname, 'public')));
+
 app.use(helmet({ contentSecurityPolicy: false }));
 
 if (process.env.NODE_ENV === 'development') {
@@ -44,6 +48,8 @@ app.use(
   })
 );
 app.use(compression());
+
+// Server APIs
 
 app.use('/api/v1/gbdleathers/shop', ShopRoutes);
 

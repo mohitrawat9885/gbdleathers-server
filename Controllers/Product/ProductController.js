@@ -40,7 +40,7 @@ exports.resizeProductImages = catchAsync(async (req, res, next) => {
       .resize(2000, 1333)
       .toFormat('jpeg')
       .jpeg({ quality: 90 })
-      .toFile(`public/img/${req.body.front_image}`);
+      .toFile(`public/images/${req.body.front_image}`);
   }
   if (req.files.back_image) {
     req.body.back_image = `product-back-image.jpeg`;
@@ -48,7 +48,7 @@ exports.resizeProductImages = catchAsync(async (req, res, next) => {
       .resize(2000, 1333)
       .toFormat('jpeg')
       .jpeg({ quality: 90 })
-      .toFile(`public/img/${req.body.back_image}`);
+      .toFile(`public/images/${req.body.back_image}`);
   }
 
   if (req.files.images) {
@@ -62,8 +62,7 @@ exports.resizeProductImages = catchAsync(async (req, res, next) => {
           .resize(2000, 1333)
           .toFormat('jpeg')
           .jpeg({ quality: 90 })
-          .toFile(`public/img/${filename}`);
-
+          .toFile(`public/images/${filename}`);
         req.body.images.push(filename);
       })
     );
