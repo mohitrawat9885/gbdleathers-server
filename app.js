@@ -15,6 +15,7 @@ const AppError = require('./Utils/appError');
 const globalErrorHandler = require('./Controllers/ErrorController');
 
 const ShopRoutes = require('./Routes/ShopRoutes');
+const ClientRoutes = require('./Routes/ClientRoutes');
 
 const app = express();
 
@@ -52,6 +53,7 @@ app.use(compression());
 // Server APIs
 
 app.use('/api/v1/gbdleathers/shop', ShopRoutes);
+app.use('/api/v1/gbdleathers/client', ClientRoutes);
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));

@@ -69,7 +69,7 @@ const VariantSchema = new mongoose.Schema(
 );
 
 VariantSchema.virtual('variants', {
-  ref: 'variants',
+  ref: 'Variants',
   foreignField: 'variant_of',
   localField: '_id',
 });
@@ -81,6 +81,6 @@ VariantSchema.pre(/^find/, function (next) {
   next();
 });
 
-const Variants = mongoose.model('variants', VariantSchema);
+const Variants = mongoose.model('Variants', VariantSchema);
 
 module.exports = Variants;

@@ -39,17 +39,4 @@ router
 
   .delete(ProductController.removeProductImage);
 
-// router.route('/:id/variant').patch(ProductController.updateVariant);
-// .post(ProductController.createVariant);
-
-// Product Varient
-// router
-//   .route('/product-variant')
-//   .post(ShopController.createProductVariant)
-//   .get(ShopController.getAllProductVariant);
-// router
-//   .route('/product-variant/:id')
-//   .get(ShopController.getProductVariant)
-//   .patch(ShopController.updateProductVariant)
-//   .delete(ShopController.removeProductVariant);
 module.exports = router;

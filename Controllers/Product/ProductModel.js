@@ -46,6 +46,21 @@ const ProductSchema = new mongoose.Schema(
       type: Array,
       default: [],
     },
+    slug: {
+      type: String,
+      unique: true,
+    },
+    ratingsAverage: {
+      type: Number,
+      default: 4.5,
+      min: [1, 'Rating must be above 1.0'],
+      max: [5, 'Rating must be below 5.0'],
+      set: (val) => Math.round(val * 10) / 10,
+    },
+    ratingsQuantity: {
+      type: Number,
+      default: 0,
+    },
     variant_name: {
       type: String,
       default: '',
@@ -64,15 +79,20 @@ const ProductSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   }
 );
-ProductSchema.pre(/^find/, function (next) {
-  //   this.populate({
-  //     path: 'tour',
-  //     select: 'name',
-  //   }).populate({
-  //     path: 'user',
-  //     select: 'name photo',
-  //   });
 
+//  Virtual populate
+ProductSchema.virtual('reviews', {
+  ref: 'Review',
+  foreignField: 'tour',
+  localField: '_id',
+});
+
+ProductSchema.pre('save', function (next) {
+  this.slug = slugify(this.name, { lower: true });
+  next();
+});
+
+ProductSchema.pre(/^find/, function (next) {
   this.populate({
     path: 'category',
     select: '_id name',
@@ -80,11 +100,11 @@ ProductSchema.pre(/^find/, function (next) {
   next();
 });
 ProductSchema.virtual('variants', {
-  ref: 'variants',
+  ref: 'Variants',
   foreignField: 'variant_of',
   localField: '_id',
 });
 
-const Products = mongoose.model('products', ProductSchema);
+const Products = mongoose.model('Products', ProductSchema);
 
 module.exports = Products;
