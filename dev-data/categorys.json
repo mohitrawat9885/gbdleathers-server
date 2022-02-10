@@ -1,0 +1,162 @@
+[
+  {
+    "_id": "61e90c5de392f3509fc296ca",
+    "user": "61e5283ed5e6bb7202dc8fe6",
+    "name": "Shop Belts",
+    "image": "c1.jpg",
+    "active": true,
+    "created_at": "2022-01-20T07:16:45.008Z",
+    "updated_at": "2022-01-20T07:16:45.009Z",
+    "__v": 0
+  },
+  {
+    "_id": "61e90c5de392f3509fc296cb",
+    "user": "61e5283ed5e6bb7202dc8fe6",
+    "name": "Shop Watches",
+    "image": "c2.jpg",
+    "active": true,
+    "created_at": "2022-01-20T07:16:45.008Z",
+    "updated_at": "2022-01-20T07:16:45.009Z",
+    "__v": 0
+  },
+  {
+    "_id": "61e90c5de392f3509fc296cc",
+    "user": "61e5283ed5e6bb7202dc8fe6",
+    "name": "Color Threads",
+    "image": "c3.jpg",
+    "active": true,
+    "created_at": "2022-01-20T07:16:45.008Z",
+    "updated_at": "2022-01-20T07:16:45.009Z",
+    "__v": 0
+  },
+  {
+    "_id": "61e90c5de392f3509fc296cd",
+    "user": "61e5283ed5e6bb7202dc8fe6",
+    "name": "The Cloth Collection",
+    "image": "c4.jpg",
+    "active": true,
+    "created_at": "2022-01-20T07:16:45.008Z",
+    "updated_at": "2022-01-20T07:16:45.009Z",
+    "__v": 0
+  },
+  {
+    "_id": "61e90c5de392f3509fc296ce",
+    "user": "61e5283ed5e6bb7202dc8fe6",
+    "name": "Leather Care",
+    "image": "c5.jpg",
+    "active": true,
+    "created_at": "2022-01-20T07:16:45.008Z",
+    "updated_at": "2022-01-20T07:16:45.009Z",
+    "__v": 0
+  },
+  {
+    "_id": "61e90c5de392f3509fc296cf",
+    "user": "61e5283ed5e6bb7202dc8fe6",
+    "name": "Wallets",
+    "image": "c6.jpg",
+    "active": true,
+    "created_at": "2022-01-20T07:16:45.008Z",
+    "updated_at": "2022-01-20T07:16:45.009Z",
+    "__v": 0
+  },
+  {
+    "_id": "61e90c5de392f3509fc296da",
+    "user": "61e5283ed5e6bb7202dc8fe6",
+    "name": "Shop Wallets",
+    "image": "cr1.jpg",
+    "active": true,
+    "created_at": "2022-01-20T07:16:45.008Z",
+    "updated_at": "2022-01-20T07:16:45.009Z",
+    "__v": 0
+  },
+  {
+    "_id": "61e90c5de392f3509fc296db",
+    "user": "61e5283ed5e6bb7202dc8fe6",
+    "name": "Fusion Craft",
+    "image": "cr2.jpg",
+    "active": true,
+    "created_at": "2022-01-20T07:16:45.008Z",
+    "updated_at": "2022-01-20T07:16:45.009Z",
+    "__v": 0
+  },
+  {
+    "_id": "61e90c5de392f3509fc296dc",
+    "user": "61e5283ed5e6bb7202dc8fe6",
+    "name": "Pocket Profile",
+    "image": "cr3.jpg",
+    "active": true,
+    "created_at": "2022-01-20T07:16:45.008Z",
+    "updated_at": "2022-01-20T07:16:45.009Z",
+    "__v": 0
+  },
+  {
+    "_id": "61e90c5de392f3509fc296dd",
+    "user": "61e5283ed5e6bb7202dc8fe6",
+    "name": "The Tech Collection",
+    "image": "cr4.jpg",
+    "active": true,
+    "created_at": "2022-01-20T07:16:45.008Z",
+    "updated_at": "2022-01-20T07:16:45.009Z",
+    "__v": 0
+  },
+  {
+    "_id": "61e90c5de392f3509fc296de",
+    "user": "61e5283ed5e6bb7202dc8fe6",
+    "name": "Hand printed Textiles Scarves",
+    "image": "cr5.jpg",
+    "active": true,
+    "created_at": "2022-01-20T07:16:45.008Z",
+    "updated_at": "2022-01-20T07:16:45.009Z",
+    "__v": 0
+  },
+  {
+    "_id": "61e90c5de392f3509fc296df",
+    "user": "61e5283ed5e6bb7202dc8fe6",
+    "name": "The Grain",
+    "image": "cr6.jpg",
+    "active": true,
+    "created_at": "2022-01-20T07:16:45.008Z",
+    "updated_at": "2022-01-20T07:16:45.009Z",
+    "__v": 0
+  },
+  {
+    "_id": "61e90c5de392f3509fc296ea",
+    "user": "61e5283ed5e6bb7202dc8fe6",
+    "name": "Art Metal Ware",
+    "image": "cr7.jpg",
+    "active": true,
+    "created_at": "2022-01-20T07:16:45.008Z",
+    "updated_at": "2022-01-20T07:16:45.009Z",
+    "__v": 0
+  },
+  {
+    "_id": "61e90c5de392f3509fc296eb",
+    "user": "61e5283ed5e6bb7202dc8fe6",
+    "name": "Folk painting",
+    "image": "cr8.jpg",
+    "active": true,
+    "created_at": "2022-01-20T07:16:45.008Z",
+    "updated_at": "2022-01-20T07:16:45.009Z",
+    "__v": 0
+  },
+  {
+    "_id": "61e90c5de392f3509fc296ec",
+    "user": "61e5283ed5e6bb7202dc8fe6",
+    "name": "Theatre, Costume & Puppet",
+    "image": "cr9.jpg",
+    "active": true,
+    "created_at": "2022-01-20T07:16:45.008Z",
+    "updated_at": "2022-01-20T07:16:45.009Z",
+    "__v": 0
+  },
+  {
+    "_id": "61e90c5de392f3509fc296ed",
+    "user": "61e5283ed5e6bb7202dc8fe6",
+    "name": "Coir twisting",
+    "image": "cr10.jpg",
+    "active": true,
+    "created_at": "2022-01-20T07:16:45.008Z",
+    "updated_at": "2022-01-20T07:16:45.009Z",
+    "__v": 0
+  }
+]

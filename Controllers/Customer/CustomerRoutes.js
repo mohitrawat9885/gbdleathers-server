@@ -1,6 +1,7 @@
 const express = require('express');
 const CustomerAuthentication = require('./../CustomerAuthentication');
 const CustomerController = require('./CustomerController');
+const OrderController = require('../Orders/OrderController');
 
 const router = express.Router();
 
@@ -15,6 +16,7 @@ router.use(CustomerAuthentication.protect);
 router.patch('/updateMyPassword', CustomerAuthentication.updatePassword);
 router.patch('/updateMe', CustomerController.updateMe);
 
+router.get('/getme', CustomerController.getme);
 router
   .route('/address')
   .post(CustomerController.createAddress)
@@ -23,5 +25,21 @@ router
   .route('/address/:id')
   .patch(CustomerController.updateAddress)
   .delete(CustomerController.deleteAddress);
+
+router
+  .route('/cart')
+  .post(CustomerController.addToCart)
+  .get(CustomerController.getAllFromCart);
+
+router
+  .route('/cart/:id')
+  // .get(CustomerController.getOneFromCart)
+  .patch(CustomerController.updateOneFromCart)
+  .delete(CustomerController.deleteOneFromCart);
+router.route('/orders').get(OrderController.getMyOrders);
+
+router
+  .route('/checkout')
+  .post(OrderController.createCheckoutData, OrderController.getCheckoutSession);
 
 module.exports = router;

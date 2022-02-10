@@ -66,7 +66,6 @@ exports.logout = (req, res) => {
 
 exports.protect = catchAsync(async (req, res, next) => {
   //  1) Getting token and check if it's there
-  // console.log('Cookie', req.cookies.jwt);
   let token;
   if (
     req.headers.authorization &&
@@ -141,7 +140,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     customer.passwordResetToken = undefined;
     customer.passwordResetExpires = undefined;
     await customer.save({ validateBeforeSave: false });
-    // console.log('Email Error', err);
+
     return next(
       new AppError(
         'There was an error sending the email. try again later!',

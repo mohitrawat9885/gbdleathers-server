@@ -22,6 +22,7 @@ const handleJWTError = () => {
 };
 
 const sendErrorDev = (err, req, res) => {
+  console.log('Development display Error', err);
   res.status(err.statusCode).json({
     status: err.status,
     error: err,

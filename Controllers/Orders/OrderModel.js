@@ -1,60 +1,58 @@
 const mongoose = require('mongoose');
 
-const OrderSchema = new mongoose.Schema({
-  //   product: {
-  //     type: mongoose.Schema.ObjectId,
-  //     ref: 'Tour',
-  //     required: [true, 'Booking must belong to a Tour!'],
-  //   },
-  customer: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'Customer',
-    required: [true, 'Booking must belong to a User!'],
-  },
-  address: {
-    type: Object,
-    required: [true, 'Order must have Address.'],
-  },
-  date: {
-    type: date,
-    default: Date.now(),
-  },
-  status: {
-    type: String,
-    required: [true, 'Order should have some status'],
-    enum: {
-      values: ['ordered', 'pending', 'canceled', 'completed'],
+const OrderSchema = new mongoose.Schema(
+  {
+    customer: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Customers',
+      required: [true, 'Order must have customer!'],
     },
-  },
-  pay: {
-    type: String,
-    required: [true, 'Order should have payment'],
-    enum: {
-      values: ['cod', 'online'],
-      message: 'Order should be either cod or online',
+    customer_detail: {
+      type: Object,
     },
-  },
-  qty: {
-    type: Number,
-    required: [true, 'Order must have quantity'],
-  },
-  cost: {
-    value: {
-      type: mongoose.SchemaTypes.Decimal128,
+    address: {
+      type: Object,
+      required: [true, 'Order must have Address.'],
     },
-    currency: {
+    status: {
       type: String,
+      required: [true, 'Order should have some status'],
+      enum: {
+        values: ['ordered', 'pending', 'canceled', 'completed'],
+      },
+    },
+    payment: {
+      type: String,
+      required: [true, 'Order should have payment status'],
+      enum: {
+        values: ['cod', 'online'],
+        message: 'Order should be either cod or online',
+      },
+    },
+    ordered_at: {
+      type: Date,
+      default: Date.now(),
+    },
+    total_cost: {
+      value: {
+        type: mongoose.SchemaTypes.Decimal128,
+      },
+      currency: {
+        type: String,
+      },
     },
   },
-});
+  {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  }
+);
 
-// OrderSchema.pre(/^find/, function (next) {
-//   this.populate('user').populate({
-//     path: 'tour',
-//     select: 'name',
-//   });
-//   next();
-// });
+OrderSchema.virtual('products', {
+  ref: 'OrderProducts',
+  foreignField: 'order_of',
+  localField: '_id',
+});
 
 const Orders = mongoose.model('Orders', OrderSchema);
 

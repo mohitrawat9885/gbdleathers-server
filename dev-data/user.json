@@ -1,0 +1,12 @@
+[
+  {
+    "_id": "61e5283ed5e6bb7202dc8fe6",
+    "first_name": "Mohit",
+    "last_name": "Rawat",
+    "email": "mohitrawat9885@gmail.com",
+    "role": "admin",
+    "password": "test1234",
+    "passwordConfirm": "test1234",
+    "__v": 0
+  }
+]

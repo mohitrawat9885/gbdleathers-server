@@ -5,9 +5,13 @@ const crypto = require('crypto');
 
 const CustomerSchema = new mongoose.Schema(
   {
-    name: {
+    first_name: {
       type: String,
-      required: [true, 'Please tell your name!'],
+      required: [true, 'Please tell your first name!'],
+    },
+    last_name: {
+      type: String,
+      // required: [true, 'Please tell your name!'],
     },
     email: {
       type: String,

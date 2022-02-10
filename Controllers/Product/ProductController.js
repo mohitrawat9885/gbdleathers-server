@@ -33,21 +33,25 @@ exports.uploadProductImages = upload.fields([
 
 exports.resizeProductImages = catchAsync(async (req, res, next) => {
   if (!req.files) return next();
-
+  // console.log('User is ', req.body);
   if (req.files.front_image) {
-    req.body.front_image = `product-front-image.jpeg`;
+    req.body.front_image = `product-front-${req.params.id}-${
+      req.user._id
+    }-${Date.now()}.jpeg`;
     await sharp(req.files.front_image[0].buffer)
-      .resize(2000, 1333)
+      .resize(1200, 1200)
       .toFormat('jpeg')
-      .jpeg({ quality: 90 })
+      .jpeg({ quality: 100 })
       .toFile(`public/images/${req.body.front_image}`);
   }
   if (req.files.back_image) {
-    req.body.back_image = `product-back-image.jpeg`;
+    req.body.back_image = `product-back-${req.params.id}-${
+      req.user._id
+    }-${Date.now()}.jpeg`;
     await sharp(req.files.back_image[0].buffer)
-      .resize(2000, 1333)
+      .resize(1200, 1200)
       .toFormat('jpeg')
-      .jpeg({ quality: 90 })
+      .jpeg({ quality: 100 })
       .toFile(`public/images/${req.body.back_image}`);
   }
 
@@ -59,9 +63,9 @@ exports.resizeProductImages = catchAsync(async (req, res, next) => {
         const filename = `product-${req.params.id}-${Date.now()}-${i + 1}.jpeg`;
 
         await sharp(file.buffer)
-          .resize(2000, 1333)
+          .resize(1200, 1200)
           .toFormat('jpeg')
-          .jpeg({ quality: 90 })
+          .jpeg({ quality: 100 })
           .toFile(`public/images/${filename}`);
         req.body.images.push(filename);
       })
@@ -99,7 +103,7 @@ exports.getProduct = catchAsync(async (req, res, next) => {
   });
   if (!doc) {
     doc = await Variants.findById(req.params.id).populate({
-      path: 'variants',
+      path: 'variant_of',
     });
   }
 
@@ -113,6 +117,12 @@ exports.getProduct = catchAsync(async (req, res, next) => {
 exports.updateProduct = catchAsync(async (req, res, next) => {
   // console
   req.body.user = req.user._id;
+  if (req.body.multi_properties) {
+    req.body.multi_properties = JSON.parse(req.body.multi_properties);
+  }
+  if (req.body.properties) {
+    req.body.properties = JSON.parse(req.body.properties);
+  }
   let doc = await Products.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true,
@@ -135,16 +145,27 @@ exports.updateProduct = catchAsync(async (req, res, next) => {
     },
   });
 });
-exports.removeProduct = factory.deleteOne(Products);
 
+// exports.removeProduct = factory.deleteOne(Products);
+exports.removeProduct = catchAsync(async (req, res, next) => {
+  let doc = await Products.findByIdAndDelete(req.params.id);
+  if (!doc) {
+    doc = await Variants.findByIdAndDelete(req.params.id);
+    if (!doc) {
+      return next(new AppError('No document found with that ID', 404));
+    }
+  }
+
+  res.status(204).json({
+    status: 'success',
+    data: null,
+  });
+});
 exports.createProductVariant = catchAsync(async (req, res, next) => {
   req.body.user = req.user._id;
   let doc = await Products.findById(req.params.id);
   if (!doc) {
-    doc = await Variants.findById(req.params.id);
-    if (!doc) {
-      return next(new AppError('No Product found with that ID', 404));
-    }
+    return next(new AppError('No Product found with that ID', 404));
   }
   req.body.category = doc.category;
   req.body.variant_of = doc._id;
@@ -232,6 +253,26 @@ exports.removeProductImage = catchAsync(async (req, res, next) => {
     status: 'success',
     data: {
       data: doc.images,
+    },
+  });
+});
+
+exports.getVariant = catchAsync(async (req, res, next) => {
+  // for (let i in req.query) {
+  //   let t = {
+  //     properties.${i}: req.query[i]
+  //   };
+  //   console.log(t);
+  // }
+  let doc = await Variants.findOne({
+    properties: req.query,
+  });
+  console.log('Variants', req.params);
+  console.log(req.query);
+  res.status(200).json({
+    status: 'success',
+    data: {
+      data: doc,
     },
   });
 });

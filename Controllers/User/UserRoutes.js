@@ -4,7 +4,7 @@ const UserController = require('./UserController');
 
 const router = express.Router();
 
-router.post('/signup', ShopAuthentication.signup);
+router.post('/signup', ShopAuthentication.protect, ShopAuthentication.signup);
 router.post('/login', ShopAuthentication.login);
 router.get('/logout', ShopAuthentication.logout);
 router.post('/forgotPassword', ShopAuthentication.forgotPassword);

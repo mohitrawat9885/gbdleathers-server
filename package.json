@@ -4,8 +4,9 @@
   "description": "Online Craft Selling & Workshop Website",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js",
-    "start:prod": "NODE_ENV=production nodemon server.js"
+    "start": "node server.js",
+    "start:dev": "NODE_ENV=development node server.js",
+    "start:prod": "NODE_ENV=production node server.js"
   },
   "keywords": [
     "Crafts",
@@ -37,6 +38,7 @@
     "pug": "^3.0.2",
     "sharp": "^0.29.3",
     "slugify": "^1.6.5",
+    "stripe": "^8.202.0",
     "validator": "^13.7.0",
     "xss-clean": "^0.1.1"
   }

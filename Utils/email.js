@@ -7,33 +7,33 @@ module.exports = class Email {
     this.to = user.email;
     this.firstName = user.firstName;
     this.url = url;
-    this.from = `Mohit Rawat <${process.env.EMAIL_FROM}>`;
+    this.from = `GBD Leathers <${process.env.EMAIL_FROM}>`;
   }
   newTransport() {
-    if (process.env.NODE_ENV === 'production') {
-      // Sendgrid
-      return nodemailer.createTransport({
-        service: 'SendGrid',
-        auth: {
-          user: process.env.SENDGRID_USERNAME,
-          pass: process.env.SENDGRID_PASSWORD,
-        },
-      });
-    }
+    // if (process.env.NODE_ENV === 'production') {
+    // Sendgrid
     return nodemailer.createTransport({
-      host: process.env.EMAIL_HOST,
-      port: process.env.EMAIL_PORT,
+      service: 'SendGrid',
       auth: {
-        user: process.env.EMAIL_USERNAME,
-        pass: process.env.EMAIL_PASSWORD,
+        user: process.env.SENDGRID_USERNAME,
+        pass: process.env.SENDGRID_PASSWORD,
       },
     });
   }
+  // return nodemailer.createTransport({
+  //   host: process.env.EMAIL_HOST,
+  //   port: process.env.EMAIL_PORT,
+  //   auth: {
+  //     user: process.env.EMAIL_USERNAME,
+  //     pass: process.env.EMAIL_PASSWORD,
+  //   },
+  // });
+  // }
 
   // send the actual email
   async send(template, subject) {
     // 1) Render HTML based on a pug template
-    const html = pug.renderFile(`${__dirname}/../views/${template}.pug`, {
+    const html = pug.renderFile(`${__dirname}/../Views/${template}.pug`, {
       firstName: this.firstName,
       url: this.url,
       subject,

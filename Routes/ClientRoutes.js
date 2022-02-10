@@ -14,7 +14,9 @@ router.get('/product', ProductController.getAllProduct);
 router.get('/category', CategoryController.getAllCategory);
 
 router.get('/product/:id', ProductController.getProduct);
-router.get('/product/:id', CategoryController.getCategory);
+router.get('/product/:id/variant', ProductController.getVariant);
+
+router.get('/category/:id', CategoryController.getCategory);
 
 // Protect Rest all routes
 router.use(CustomerAuthentication.protect);

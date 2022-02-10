@@ -44,7 +44,7 @@ const CategorySchema = new mongoose.Schema(
 );
 
 CategorySchema.virtual('products', {
-  ref: 'products',
+  ref: 'Products',
   foreignField: 'category',
   localField: '_id',
 });
@@ -54,6 +54,6 @@ CategorySchema.pre('save', function (next) {
   next();
 });
 
-const Categorys = mongoose.model('categorys', CategorySchema);
+const Categorys = mongoose.model('Categorys', CategorySchema);
 
 module.exports = Categorys;

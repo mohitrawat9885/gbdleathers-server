@@ -13,7 +13,7 @@ const VariantSchema = new mongoose.Schema(
     variant_of: {
       type: mongoose.Schema.ObjectId,
       ref: 'Products',
-      ref: 'Variants',
+      // ref: 'Variants',
     },
     category: {
       type: mongoose.Schema.ObjectId,
@@ -21,7 +21,7 @@ const VariantSchema = new mongoose.Schema(
     },
     name: {
       type: String,
-      required: [true, 'Please give one name to your new product variant'],
+      // required: [true, 'Please give one name to your new product variant'],
     },
     front_image: String,
     back_image: String,
@@ -49,9 +49,12 @@ const VariantSchema = new mongoose.Schema(
       type: Array,
       default: [],
     },
-    variant_name: {
-      type: String,
-      default: '',
+    properties: {
+      type: Object,
+      // unique: [true, 'This Variant is already present.'],
+    },
+    multi_properties: {
+      type: Object,
     },
     created_at: {
       type: Date,
@@ -68,15 +71,15 @@ const VariantSchema = new mongoose.Schema(
   }
 );
 
-VariantSchema.virtual('variants', {
-  ref: 'Variants',
-  foreignField: 'variant_of',
-  localField: '_id',
-});
+// VariantSchema.virtual('product', {
+//   ref: 'Product',
+//   foreignField: 'variant_of',
+//   localField: '_id',
+// });
 
 VariantSchema.pre(/^find/, function (next) {
   this.populate({
-    path: 'variants',
+    path: 'variant_of',
   });
   next();
 });

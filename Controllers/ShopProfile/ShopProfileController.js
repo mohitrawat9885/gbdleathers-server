@@ -29,9 +29,9 @@ exports.resizeShopGallaryImage = catchAsync(async (req, re, next) => {
   req.file.filename = `gallary-${req.user._id}-${Date.now()}.jpeg`;
 
   await sharp(req.file.buffer)
-    .resize(500, 500)
+    .resize(1200, 1200)
     .toFormat('jpeg')
-    .jpeg({ quality: 90 })
+    .jpeg({ quality: 100 })
     .toFile(`./public/images/${req.file.filename}`);
   req.body.image = req.file.filename;
   next();
@@ -50,22 +50,21 @@ exports.resizeShopProfileImages = catchAsync(async (req, res, next) => {
   // console.log(req.files);
 
   if (req.files.front_image) {
-    req.body.front_image = `shop-profile-front-image.jpeg`;
+    req.body.front_image = `shop-profile-front-image-${Date.now()}.jpeg`;
     await sharp(req.files.front_image[0].buffer)
-      .resize(2000, 1333)
+      .resize(1200, 1200)
       .toFormat('jpeg')
-      .jpeg({ quality: 90 })
-      .toFile(`public/img/${req.body.front_image}`);
+      .jpeg({ quality: 100 })
+      .toFile(`public/images/${req.body.front_image}`);
   }
   if (req.files.back_image) {
-    req.body.back_image = `shop-profile-back-image.jpeg`;
+    req.body.back_image = `shop-profile-back-image-${Date.now()}.jpeg`;
     await sharp(req.files.back_image[0].buffer)
-      .resize(2000, 1333)
+      .resize(1200, 1200)
       .toFormat('jpeg')
-      .jpeg({ quality: 90 })
-      .toFile(`public/img/${req.body.back_image}`);
+      .jpeg({ quality: 100 })
+      .toFile(`public/images/${req.body.back_image}`);
   }
-
   next();
 });
 

@@ -1,10 +1,11 @@
 const mongoose = require('mongoose');
+const slugify = require('slugify');
 
 const ProductSchema = new mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.ObjectId,
-      ref: 'User',
+      ref: 'Users',
       required: [
         true,
         'User details are missing. Please logout and then login again!',
@@ -12,17 +13,16 @@ const ProductSchema = new mongoose.Schema(
     },
     category: {
       type: mongoose.Schema.ObjectId,
-      ref: 'categorys',
+      ref: 'Categorys',
     },
     name: {
       type: String,
-      //  required: [true, 'Please give one name to your new product'],
+      required: [true, 'Product should have a name!'],
     },
     front_image: String,
     back_image: String,
     price: {
       type: Number,
-      //  require: [true, 'Please provide price of new product'],
       min: 0,
     },
     stock: {
@@ -36,7 +36,6 @@ const ProductSchema = new mongoose.Schema(
     summary: {
       type: String,
       trim: true,
-      //  required: [true, 'Product must have a summary'],
     },
     description: {
       type: String,
@@ -50,6 +49,9 @@ const ProductSchema = new mongoose.Schema(
       type: String,
       unique: true,
     },
+    multi_properties: {
+      type: Object,
+    },
     ratingsAverage: {
       type: Number,
       default: 4.5,
@@ -60,10 +62,6 @@ const ProductSchema = new mongoose.Schema(
     ratingsQuantity: {
       type: Number,
       default: 0,
-    },
-    variant_name: {
-      type: String,
-      default: '',
     },
     created_at: {
       type: Date,
@@ -83,7 +81,7 @@ const ProductSchema = new mongoose.Schema(
 //  Virtual populate
 ProductSchema.virtual('reviews', {
   ref: 'Review',
-  foreignField: 'tour',
+  foreignField: 'product',
   localField: '_id',
 });
 

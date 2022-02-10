@@ -27,9 +27,9 @@ exports.resizeCategoryImage = catchAsync(async (req, re, next) => {
   req.file.filename = `category-${req.user._id}-${Date.now()}.jpeg`;
 
   await sharp(req.file.buffer)
-    .resize(500, 500)
+    .resize(1200, 1200)
     .toFormat('jpeg')
-    .jpeg({ quality: 90 })
+    .jpeg({ quality: 100 })
     .toFile(`./public/images/${req.file.filename}`);
   req.body.image = req.file.filename;
   next();
