@@ -52,8 +52,8 @@ exports.createCheckoutData = catchAsync(async (req, res, next) => {
   }
 
   let OrderData = {
-    products: products,
     order: {
+      products: products,
       _id: order_id,
       customer: customer._id,
       customer_detail: {
@@ -73,11 +73,11 @@ exports.createCheckoutData = catchAsync(async (req, res, next) => {
         phone: address.phone,
       },
       status: 'ordered',
-      payment: 'cod',
+      payment: 'online',
       ordered_at: Date.now(),
       total_cost: {
         value: totalCost,
-        currency: 'QTR',
+        currency: 'USD',
       },
     },
   };
@@ -87,15 +87,15 @@ exports.createCheckoutData = catchAsync(async (req, res, next) => {
 
 exports.getCheckoutSession = catchAsync(async (req, res, next) => {
   let item_Array = [];
-  for (let i in req.OrderData.products) {
+  for (let i in req.OrderData.order.products) {
     let obj = {
-      name: req.OrderData.products[i].product.name,
-      amount: req.OrderData.products[i].product.price * 100,
+      name: req.OrderData.order.products[i].product.name,
+      amount: req.OrderData.order.products[i].product.price * 100,
       currency: 'usd',
-      quantity: req.OrderData.products[i].quantity,
+      quantity: req.OrderData.order.products[i].quantity,
       images: [
         `${req.protocol}://${req.get('host')}/images/${
-          req.OrderData.products[i].product.image
+          req.OrderData.order.products[i].product.image
         }`,
       ],
     };
@@ -127,10 +127,10 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
 });
 
 const setOrderData = async (OrderData) => {
-  console.log('Order Recieved is ', OrderData);
+  // console.log('Order Recieved is ', OrderData);
   await Orders.create(OrderData.order);
-  await OrderProducts.create(OrderData.products);
-  await Cart.deleteMany({ customer: OrderData.order.customer });
+  // await OrderProducts.create(OrderData.products);
+  // await Cart.deleteMany({ customer: OrderData.order.customer });
 };
 
 exports.getMyOrders = catchAsync(async (req, res) => {
@@ -145,3 +145,8 @@ exports.getMyOrders = catchAsync(async (req, res) => {
     data: doc,
   });
 });
+
+// ADMIN FUNCTIONSSS----------------
+exports.getAllOrders = factory.getAll(Orders, { path: 'products' });
+exports.updateOrder = factory.updateOne(Orders);
+exports.deleteOrder = factory.deleteOne(Orders);

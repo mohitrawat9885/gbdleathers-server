@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 
 const OrderSchema = new mongoose.Schema(
   {
+    products: {
+      type: Array,
+      required: [true, 'Order must have Product/Products'],
+    },
     customer: {
       type: mongoose.Schema.ObjectId,
       ref: 'Customers',
@@ -48,11 +52,11 @@ const OrderSchema = new mongoose.Schema(
   }
 );
 
-OrderSchema.virtual('products', {
-  ref: 'OrderProducts',
-  foreignField: 'order_of',
-  localField: '_id',
-});
+// OrderSchema.virtual('products', {
+//   ref: 'OrderProducts',
+//   foreignField: 'order_of',
+//   localField: '_id',
+// });
 
 const Orders = mongoose.model('Orders', OrderSchema);
 
