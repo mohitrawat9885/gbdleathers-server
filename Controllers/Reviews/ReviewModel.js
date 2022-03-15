@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Products = require('../Product/ProductModel');
+const Variants = require('../Product/VariantModel');
 const ReviewSchema = new mongoose.Schema(
   {
     review: {
@@ -10,19 +11,32 @@ const ReviewSchema = new mongoose.Schema(
       type: Number,
       min: 1,
       max: 5,
+      required: [true, 'Review must have rating.'],
+    },
+    images: {
+      type: Array,
     },
     created_at: {
       type: Date,
       default: Date.now(),
     },
+    updated_at: {
+      type: Date,
+      default: Date.now(),
+    },
     product: {
       type: mongoose.Schema.ObjectId,
-      ref: 'Product',
+      refPath: 'onModel',
       required: [true, 'Review must belong to a product.'],
+    },
+    onModel: {
+      type: String,
+      required: true,
+      enum: ['Products', 'Variants'],
     },
     customer: {
       type: mongoose.Schema.ObjectId,
-      ref: 'Customer',
+      ref: 'Customers',
       required: [true, 'Review must belongs to a customer'],
     },
   },
@@ -37,7 +51,7 @@ ReviewSchema.index({ product: 1, customer: 1 }, { unique: true });
 ReviewSchema.pre(/^find/, function (next) {
   this.populate({
     path: 'customer',
-    select: 'name',
+    select: '_id first_name last_name',
   });
   next();
 });
@@ -58,15 +72,27 @@ ReviewSchema.statics.calcAverageRatings = async function (productId) {
   // console.log(stats);
 
   if (stats.length > 0) {
-    await Products.findByIdAndUpdate(productId, {
+    let doc = await Products.findByIdAndUpdate(productId, {
       ratingsQuantity: stats[0].nRating,
       ratingsAverage: stats[0].avgRating,
     });
+    if (!doc) {
+      await Variants.findByIdAndUpdate(productId, {
+        ratingsQuantity: stats[0].nRating,
+        ratingsAverage: stats[0].avgRating,
+      });
+    }
   } else {
-    await Products.findByIdAndUpdate(productId, {
+    let doc = await Products.findByIdAndUpdate(productId, {
       ratingsQuantity: 0,
       ratingsAverage: 4.5,
     });
+    if (!doc) {
+      await Variants.findByIdAndUpdate(productId, {
+        ratingsQuantity: 0,
+        ratingsAverage: 4.5,
+      });
+    }
   }
 };
 

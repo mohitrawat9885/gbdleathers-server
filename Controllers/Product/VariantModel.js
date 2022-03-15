@@ -56,6 +56,17 @@ const VariantSchema = new mongoose.Schema(
     multi_properties: {
       type: Object,
     },
+    ratingsAverage: {
+      type: Number,
+      default: 4.5,
+      min: [1, 'Rating must be above 1.0'],
+      max: [5, 'Rating must be below 5.0'],
+      set: (val) => Math.round(val * 10) / 10,
+    },
+    ratingsQuantity: {
+      type: Number,
+      default: 0,
+    },
     created_at: {
       type: Date,
       default: Date.now,
@@ -82,6 +93,11 @@ VariantSchema.pre(/^find/, function (next) {
     path: 'variant_of',
   });
   next();
+});
+VariantSchema.virtual('reviews', {
+  ref: 'Reviews',
+  foreignField: 'product',
+  localField: '_id',
 });
 
 const Variants = mongoose.model('Variants', VariantSchema);

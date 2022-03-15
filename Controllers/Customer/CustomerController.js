@@ -6,6 +6,8 @@ const factory = require('./../HandlerFactory');
 const Customers = require('./CustomerModel');
 const Addresses = require('./AddressModel');
 const Cart = require('./CartModel');
+const Products = require('../Product/ProductModel');
+const Variants = require('../Product/VariantModel');
 
 const APIFeatures = require(`${__dirname}/../../Utils/apiFeatures`);
 
@@ -91,17 +93,34 @@ exports.getme = catchAsync(async (req, res, next) => {
 });
 
 exports.addToCart = catchAsync(async (req, res, next) => {
-  console.log(req.body.product);
+  // console.log('Cart', req.body);
   let doc = await Cart.findOne({
-    customer: req.customer._id,
+    customer: req.body.customer,
     product: req.body.product,
   });
   if (!doc) {
-    doc = await Cart.create(req.body);
+    let newCartItem = {
+      product: req.body.product,
+      onModel: '',
+      customer: req.customer._id,
+      quantity: req.body.quantity ? req.body.quantity : 1,
+    };
+    let doc2 = await Products.findById(req.body.product);
+    if (doc2) {
+      newCartItem.onModel = 'Products';
+    } else {
+      doc2 = await Variants.findById(req.body.product);
+      if (doc2) {
+        newCartItem.onModel = 'Variants';
+      } else {
+        return next(new AppError('No Product exists with this Id.', 404));
+      }
+    }
+    doc = await Cart.create(newCartItem);
   } else {
     let qty = doc.quantity + (req.body.quantity ? req.body.quantity : 1);
     if (qty === 0) {
-      console.log(doc._id, qty);
+      // console.log(doc._id, qty);
       doc = await Cart.findByIdAndDelete(doc._id);
       res.status(204).json({
         status: 'success',
@@ -140,9 +159,37 @@ exports.getAllFromCart = catchAsync(async (req, res, next) => {
     .skip();
 
   // const doc = await features.query.explain();
+
   let query = features.query;
   query.populate({ path: 'product' });
   const doc = await query;
+
+  for (let i in doc) {
+    if (doc[i].onModel === 'Variants') {
+      let product = doc[i].product;
+      let variant_of = product.variant_of;
+      // console.log('Properties', product.properties);
+      let name_2 = '';
+      for (let j in product.properties) {
+        if (name_2) name_2 = name_2 + ' ';
+        name_2 =
+          name_2 + j.toLowerCase() + ' ' + product.properties[j].toLowerCase();
+      }
+      if (!product.name) product.name = variant_of.name + '-' + name_2;
+      else product.name = product.name + ' ' + name_2;
+      if (!product.category) product.category = variant_of.category;
+      if (!product.front_image) product.front_image = variant_of.front_image;
+      if (!product.back_image) product.back_image = variant_of.back_image;
+      if (!product.price) product.price = variant_of.price;
+      if (!product.stock) product.stock = variant_of.stock;
+      if (!product.summary) product.summary = variant_of.summary;
+      if (!product.description) product.description = variant_of.description;
+      if (!product.images && product.images < 1)
+        product.images = variant_of.images;
+      // console.log(doc[i]);
+      doc[i].product = product;
+    }
+  }
 
   res.status(201).json({
     status: 'success',

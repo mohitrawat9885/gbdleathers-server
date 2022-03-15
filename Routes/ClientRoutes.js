@@ -4,6 +4,7 @@ const CustomerRoutes = require('../Controllers/Customer/CustomerRoutes');
 const ReviewRoutes = require('./../Controllers/Reviews/ReviewRoutes');
 const ProductController = require('./../Controllers/Product/ProductController');
 const CategoryController = require('./../Controllers/Category/CategoryController');
+const ReviewController = require('./../Controllers/Reviews/ReviewController');
 
 const router = express.Router();
 
@@ -17,7 +18,7 @@ router.get('/product/:id', ProductController.getProduct);
 router.get('/product/:id/variant', ProductController.getVariant);
 
 router.get('/category/:id', CategoryController.getCategory);
-
+router.get('/reviews/:productId', ReviewController.getAllReview);
 // Protect Rest all routes
 router.use(CustomerAuthentication.protect);
 router.use('/customer/reviews', ReviewRoutes);

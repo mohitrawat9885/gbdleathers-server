@@ -5,8 +5,13 @@ const CartSchema = new mongoose.Schema(
   {
     product: {
       type: mongoose.Schema.ObjectId,
-      ref: 'Products',
+      refPath: 'onModel',
       required: [true, 'Product is missing!'],
+    },
+    onModel: {
+      type: String,
+      required: true,
+      enum: ['Products', 'Variants'],
     },
     customer: {
       type: mongoose.Schema.ObjectId,

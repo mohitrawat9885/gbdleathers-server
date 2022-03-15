@@ -32,18 +32,15 @@ exports.createCheckoutData = catchAsync(async (req, res, next) => {
   const cart = await Cart.find({ customer: req.customer._id }).populate({
     path: 'product',
   });
-  const order_id = new mongoose.Types.ObjectId();
+  // const order_id = new mongoose.Types.ObjectId();
   let products = [];
   let totalCost = 0;
   for (let i = 0; i < cart.length; i++) {
     let productObj = {
-      order_of: order_id,
-      product: {
-        product_id: cart[i].product._id,
-        name: cart[i].product.name,
-        image: cart[i].product.front_image,
-        price: cart[i].product.price,
-      },
+      _id: cart[i].product._id,
+      name: cart[i].product.name,
+      image: cart[i].product.front_image,
+      price: cart[i].product.price,
       quantity: cart[i].quantity,
       status: 'ordered',
     };
@@ -51,57 +48,53 @@ exports.createCheckoutData = catchAsync(async (req, res, next) => {
     products.push(productObj);
   }
 
-  let OrderData = {
-    order: {
-      products: products,
-      _id: order_id,
-      customer: customer._id,
-      customer_detail: {
-        first_name: customer.first_name,
-        last_name: customer.last_name,
-        email: customer.email,
-      },
-      address: {
-        _id: address._id,
-        first_name: address.first_name,
-        last_name: address.last_name,
-        address_1: address.address_1,
-        city: address.city,
-        country: address.country,
-        province: address.province,
-        postal_zip_code: address.postal_zip_code,
-        phone: address.phone,
-      },
-      status: 'ordered',
-      payment: 'online',
-      ordered_at: Date.now(),
-      total_cost: {
-        value: totalCost,
-        currency: 'USD',
-      },
+  let order = {
+    products: products,
+    customer: customer._id,
+    customer_detail: {
+      first_name: customer.first_name,
+      last_name: customer.last_name,
+      email: customer.email,
+    },
+    address: {
+      _id: address._id,
+      first_name: address.first_name,
+      last_name: address.last_name,
+      address_1: address.address_1,
+      city: address.city,
+      country: address.country,
+      province: address.province,
+      postal_zip_code: address.postal_zip_code,
+      phone: address.phone,
+    },
+    status: 'ordered',
+    payment: 'online',
+    ordered_at: Date.now(),
+    total_cost: {
+      value: totalCost,
+      currency: 'USD',
     },
   };
-  req.OrderData = OrderData;
+  req.order = order;
   next();
 });
 
 exports.getCheckoutSession = catchAsync(async (req, res, next) => {
   let item_Array = [];
-  for (let i in req.OrderData.order.products) {
+  for (let i in req.order.products) {
     let obj = {
-      name: req.OrderData.order.products[i].product.name,
-      amount: req.OrderData.order.products[i].product.price * 100,
+      name: req.order.products[i].name,
+      amount: req.order.products[i].price * 100,
       currency: 'usd',
-      quantity: req.OrderData.order.products[i].quantity,
+      quantity: req.order.products[i].quantity,
       images: [
         `${req.protocol}://${req.get('host')}/images/${
-          req.OrderData.order.products[i].product.image
+          req.order.products[i].image
         }`,
       ],
     };
     item_Array.push(obj);
   }
-  //   console.log(item_Array);
 
   const session = await stripe.checkout.sessions.create({
     mode: 'payment',
@@ -115,31 +108,27 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
     client_reference_id: 'customer-cart-reference-id',
     line_items: item_Array,
   });
-  setOrderData(req.OrderData);
+  setOrderData(req.order);
   res.status(200).json({
     status: 'success',
     payment_url: session.url,
   });
 
-  //   next();
-  //   res.send('s');
   //   res.redirect(303, session.url);
 });
 
-const setOrderData = async (OrderData) => {
+const setOrderData = async (order) => {
   // console.log('Order Recieved is ', OrderData);
-  await Orders.create(OrderData.order);
+  await Orders.create(order);
   // await OrderProducts.create(OrderData.products);
-  // await Cart.deleteMany({ customer: OrderData.order.customer });
+  await Cart.deleteMany({ customer: order.customer });
 };
 
 exports.getMyOrders = catchAsync(async (req, res) => {
-  const doc = await Orders.find({ customer: req.customer._id })
-    .populate({
-      path: 'products',
-    })
-    .sort('-ordered_at');
-  //   console.log('Orders', doc);
+  const doc = await Orders.find({ customer: req.customer._id }).sort(
+    '-ordered_at'
+  );
+
   res.status(200).json({
     status: 'success',
     data: doc,
@@ -147,6 +136,7 @@ exports.getMyOrders = catchAsync(async (req, res) => {
 });
 
 // ADMIN FUNCTIONSSS----------------
-exports.getAllOrders = factory.getAll(Orders, { path: 'products' });
+exports.getAllOrders = factory.getAll(Orders);
+exports.getOrder = factory.getOne(Orders);
 exports.updateOrder = factory.updateOne(Orders);
 exports.deleteOrder = factory.deleteOne(Orders);

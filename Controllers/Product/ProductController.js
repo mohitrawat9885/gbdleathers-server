@@ -6,6 +6,7 @@ const catchAsync = require('../../Utils/catchAsync');
 const AppError = require('../../Utils/appError');
 const Products = require('./ProductModel');
 const Variants = require('./VariantModel');
+const Cart = require('../Customer/CartModel');
 
 const multerStorage = multer.memoryStorage();
 
@@ -98,13 +99,17 @@ exports.getAllProduct = factory.getAll(Products);
 exports.getProduct = factory.getOne(Products, { path: 'variants' });
 
 exports.getProduct = catchAsync(async (req, res, next) => {
-  let doc = await Products.findById(req.params.id).populate({
-    path: 'variants',
-  });
+  let doc = await Products.findById(req.params.id)
+    .populate({
+      path: 'variants',
+    })
+    .populate({ path: 'reviews' });
   if (!doc) {
-    doc = await Variants.findById(req.params.id).populate({
-      path: 'variant_of',
-    });
+    doc = await Variants.findById(req.params.id)
+      .populate({
+        path: 'variant_of',
+      })
+      .populate({ path: 'reviews' });
   }
 
   res.status(200).json({
@@ -148,6 +153,7 @@ exports.updateProduct = catchAsync(async (req, res, next) => {
 
 // exports.removeProduct = factory.deleteOne(Products);
 exports.removeProduct = catchAsync(async (req, res, next) => {
+  await Cart.deleteMany({ product: req.params.id });
   let doc = await Products.findByIdAndDelete(req.params.id);
   if (!doc) {
     doc = await Variants.findByIdAndDelete(req.params.id);
@@ -155,7 +161,6 @@ exports.removeProduct = catchAsync(async (req, res, next) => {
       return next(new AppError('No document found with that ID', 404));
     }
   }
-
   res.status(204).json({
     status: 'success',
     data: null,

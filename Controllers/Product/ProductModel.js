@@ -80,7 +80,7 @@ const ProductSchema = new mongoose.Schema(
 
 //  Virtual populate
 ProductSchema.virtual('reviews', {
-  ref: 'Review',
+  ref: 'Reviews',
   foreignField: 'product',
   localField: '_id',
 });
