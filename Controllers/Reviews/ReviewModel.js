@@ -85,12 +85,12 @@ ReviewSchema.statics.calcAverageRatings = async function (productId) {
   } else {
     let doc = await Products.findByIdAndUpdate(productId, {
       ratingsQuantity: 0,
-      ratingsAverage: 4.5,
+      ratingsAverage: 0,
     });
     if (!doc) {
       await Variants.findByIdAndUpdate(productId, {
         ratingsQuantity: 0,
-        ratingsAverage: 4.5,
+        ratingsAverage: 0,
       });
     }
   }

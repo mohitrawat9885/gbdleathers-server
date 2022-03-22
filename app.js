@@ -41,9 +41,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(helmet({ contentSecurityPolicy: false }));
 
-if (process.env.NODE_ENV === 'development') {
-  app.use(morgan('dev'));
-}
+// if (process.env.NODE_ENV === 'development') {
+//   app.use(morgan('dev'));
+// }
 // const limiter = rateLimit({
 //   max: 100,
 //   windowMs: 60 * 60 * 1000,

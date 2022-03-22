@@ -98,14 +98,13 @@ exports.addToCart = catchAsync(async (req, res, next) => {
     customer: req.body.customer,
     product: req.body.product,
   });
-  if (!doc) {
-    let newCartItem = {
-      product: req.body.product,
-      onModel: '',
-      customer: req.customer._id,
-      quantity: req.body.quantity ? req.body.quantity : 1,
-    };
-    let doc2 = await Products.findById(req.body.product);
+  let newCartItem = {
+    product: req.body.product,
+    onModel: '',
+    customer: req.customer._id,
+    quantity: req.body.quantity ? req.body.quantity : 1,
+  };
+  let doc2 = await Products.findById(req.body.product);
     if (doc2) {
       newCartItem.onModel = 'Products';
     } else {
@@ -116,10 +115,20 @@ exports.addToCart = catchAsync(async (req, res, next) => {
         return next(new AppError('No Product exists with this Id.', 404));
       }
     }
+    if(newCartItem.quantity >= 0 && doc2.stock === 0 ){
+      return next(new AppError('Not enough stock', 404));
+    }
+  if (!doc) {
+    if(newCartItem.quantity > doc2.stock || newCartItem.quantity <= 0){
+      return next(new AppError('Not enough stock', 404));
+    }
     doc = await Cart.create(newCartItem);
   } else {
     let qty = doc.quantity + (req.body.quantity ? req.body.quantity : 1);
-    if (qty === 0) {
+    if(qty > doc2.stock && !(qty < doc.quantity)){
+      return next(new AppError('Not enough stock', 404));
+    }
+    if (qty === 0 || qty < 0) {
       // console.log(doc._id, qty);
       doc = await Cart.findByIdAndDelete(doc._id);
       res.status(204).json({

@@ -8,6 +8,7 @@ const Cart = require('../Customer/CartModel');
 const Orders = require('./OrderModel');
 const OrderProducts = require('./OrderProductModel');
 const AppError = require('../../Utils/appError');
+const Products = require('../Product/ProductModel');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 exports.createCheckoutData = catchAsync(async (req, res, next) => {
@@ -32,10 +33,16 @@ exports.createCheckoutData = catchAsync(async (req, res, next) => {
   const cart = await Cart.find({ customer: req.customer._id }).populate({
     path: 'product',
   });
+  if(!cart || cart.length == 0){
+    return next(new AppError('Your Cart have no Item!', 404));
+  }
   // const order_id = new mongoose.Types.ObjectId();
   let products = [];
   let totalCost = 0;
   for (let i = 0; i < cart.length; i++) {
+    if(cart[i].quantity > cart[i].product.stock ){
+      return next(new AppError(`${cart[i].product.name} have only ${cart[i].product.stock} stock(s) remaining.`, 404));
+    }
     let productObj = {
       _id: cart[i].product._id,
       name: cart[i].product.name,
@@ -47,6 +54,7 @@ exports.createCheckoutData = catchAsync(async (req, res, next) => {
     totalCost = totalCost + cart[i].quantity * cart[i].product.price;
     products.push(productObj);
   }
+  // return;
 
   let order = {
     products: products,
@@ -71,12 +79,18 @@ exports.createCheckoutData = catchAsync(async (req, res, next) => {
     payment: 'online',
     ordered_at: Date.now(),
     total_cost: {
-      value: totalCost,
+      value: totalCost.toFixed(2),
       currency: 'USD',
     },
   };
   req.order = order;
-  next();
+  setOrderData(req.order);
+  return res.status(200).json({
+    status: 'success',
+    message: 'Your Order has been received.',
+    payment_url: '/my-account/?option=orders'
+  });
+  // next();
 });
 
 exports.getCheckoutSession = catchAsync(async (req, res, next) => {
@@ -113,16 +127,28 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
     status: 'success',
     payment_url: session.url,
   });
-
   //   res.redirect(303, session.url);
 });
 
 const setOrderData = async (order) => {
   // console.log('Order Recieved is ', OrderData);
+
+  for(let i in order.products){
+    Products.findById(order.products[i]._id, (err, prd) =>{
+      prd.stock = prd.stock - order.products[i].quantity;
+      prd.save()
+    })
+  }
+
+
+  // console.log(order.products)
   await Orders.create(order);
   // await OrderProducts.create(OrderData.products);
   await Cart.deleteMany({ customer: order.customer });
 };
+
+
+
 
 exports.getMyOrders = catchAsync(async (req, res) => {
   const doc = await Orders.find({ customer: req.customer._id }).sort(

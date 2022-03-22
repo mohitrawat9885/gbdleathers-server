@@ -12,7 +12,7 @@ const DB = process.env.DATABASE.replace(
   process.env.DATABASE_PASSWORD
 );
 
-mongoose.connect(DB).then(() => console.log('Database Connected'));
+mongoose.connect(process.env.DATABASE_LOCAL).then(() => console.log('Database Connected'));
 
 // READ JSON FILE
 
@@ -41,10 +41,10 @@ products.forEach((p, i) => {
 
 const importData = async () => {
   try {
-    // await Categorys.create(categorys);
+    await Categorys.create(categorys);
     await Products.create(products);
-    // await ShopProfile.create(shopProfile);
-    // await Users.create(users);
+    await ShopProfile.create(shopProfile);
+    await Users.create(users);
     console.log('Data Loaded!👌👌');
   } catch (err) {
     console.log(err);
@@ -56,8 +56,8 @@ const deleteData = async () => {
   try {
     await Categorys.deleteMany();
     await Products.deleteMany();
-    // await ShopProfile.deleteMany();
-    // await Users.deleteMany();
+    await ShopProfile.deleteMany();
+    await Users.deleteMany();
 
     console.log('Data has been deleted!☠️☠️');
   } catch (err) {
