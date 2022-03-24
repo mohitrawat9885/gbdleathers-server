@@ -62,6 +62,12 @@ exports.getAll = (Model, popOptions) =>
 
     let filter = {};
     if (req.params.id) filter = { t: req.params.id };
+    // console.log(Model)
+
+    // console.log(req.user)
+    
+    
+    // console.log("All Products")
 
     const features = new APIFeatures(Model.find(filter), req.query)
       .filter()
@@ -72,6 +78,13 @@ exports.getAll = (Model, popOptions) =>
 
     // const doc = await features.query.explain();
     let query = features.query;
+    let filterActive;
+    if(!req.user){
+      filterActive = {active: {$ne: false}}
+      query.find(filterActive)
+    }
+    
+    
     if (popOptions) query.populate(popOptions);
     const doc = await query;
 

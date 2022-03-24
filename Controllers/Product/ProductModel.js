@@ -78,6 +78,11 @@ const ProductSchema = new mongoose.Schema(
   }
 );
 
+// ProductSchema.pre(/^find/, function(next) {
+//   this.find({ active: { $ne: false } });
+//   next();
+// });
+
 //  Virtual populate
 ProductSchema.virtual('reviews', {
   ref: 'Reviews',

@@ -23,23 +23,31 @@ const upload = multer({
   fileFilter: multerFilter,
 });
 
-exports.uploadReviewImages = upload.fields([{ name: 'images', maxCount: 6 }]);
+exports.uploadReviewImages = upload.fields([{ name: 'images', maxCount: 5 }]);
 
 // upload.single('image')
 // upload.array('images', 5)
 
 exports.resizeReviewImages = catchAsync(async (req, res, next) => {
+  
   if (!req.files) return next();
+
+  // console.log("Images are ", req.files.images[1])
+  // for(let i in req.files.images){
+  //   console.log(`Image no ${i}`, req.body.images)
+  // }
+  // console.log("My files", req.files.images)
+  // return;
 
   if (req.files.images) {
     req.body.images = [];
+    // console.log("Review Images ", req.file.images)
 
     await Promise.all(
       req.files.images.map(async (file, i) => {
         const filename = `review-${req.params.productId}-${Date.now()}-${
           i + 1
         }.jpeg`;
-
         await sharp(file.buffer)
           .resize(800, 800)
           .toFormat('jpeg')
@@ -53,6 +61,7 @@ exports.resizeReviewImages = catchAsync(async (req, res, next) => {
 });
 
 exports.createReview = catchAsync(async (req, res, next) => {
+  console.log("Request is ", req.body)
   if (!req.body.product) req.body.product = req.params.productId;
   if (!req.body.customer) req.body.customer = req.customer._id;
   console.log('Review and Rating is ', req.body.review, ' ', req.body.rating);
@@ -74,6 +83,7 @@ exports.createReview = catchAsync(async (req, res, next) => {
     }
   }
   const doc = await Reviews.create(newReview);
+  console.log("Created Review is ", doc)
   res.status(201).json({
     status: 'success',
     data: doc,

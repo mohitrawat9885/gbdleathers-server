@@ -118,6 +118,9 @@ exports.addToCart = catchAsync(async (req, res, next) => {
     if(newCartItem.quantity >= 0 && doc2.stock === 0 ){
       return next(new AppError('Not enough stock', 404));
     }
+    if(!(newCartItem.quantity <= 0) && doc2.active === false){
+      return next(new AppError(`${doc2.name} is no longer in sale.`, 404));
+    }
   if (!doc) {
     if(newCartItem.quantity > doc2.stock || newCartItem.quantity <= 0){
       return next(new AppError('Not enough stock', 404));

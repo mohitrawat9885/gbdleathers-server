@@ -9,8 +9,8 @@ router.route('/');
 router
   .route('/:productId')
   .post(
-    // ReviewController.uploadReviewImages,
-    // ReviewController.resizeReviewImages,
+    ReviewController.uploadReviewImages,
+    ReviewController.resizeReviewImages,
     ReviewController.createReview
   )
   .get(ReviewController.getReview)

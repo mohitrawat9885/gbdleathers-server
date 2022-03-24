@@ -43,6 +43,9 @@ exports.createCheckoutData = catchAsync(async (req, res, next) => {
     if(cart[i].quantity > cart[i].product.stock ){
       return next(new AppError(`${cart[i].product.name} have only ${cart[i].product.stock} stock(s) remaining.`, 404));
     }
+    if(cart[i].product.active === false){
+      return next(new AppError(`${cart[i].product.name} is no longer in sale`, 404));
+    }
     let productObj = {
       _id: cart[i].product._id,
       name: cart[i].product.name,

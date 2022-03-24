@@ -96,6 +96,8 @@ exports.createProduct = catchAsync(async (req, res, next) => {
 });
 
 exports.getAllProduct = factory.getAll(Products);
+
+
 exports.getProduct = factory.getOne(Products, { path: 'variants' });
 
 exports.getProduct = catchAsync(async (req, res, next) => {
