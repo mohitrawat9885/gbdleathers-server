@@ -171,7 +171,7 @@ exports.getAllFromCart = catchAsync(async (req, res, next) => {
     .sort()
     .limitFields()
     .paginate()
-    .skip();
+    // .skip();
 
   // const doc = await features.query.explain();
 

@@ -38,20 +38,17 @@ class APIFeatures {
     return this;
   }
   paginate() {
-    
     const page = this.queryString.page * 1 || 1;
     const limit = this.queryString.limit * 1 || 100;
     const skip = (page - 1) * limit;
-
-    this.query = this.query.limit(parseInt(limit)).skip(parseInt(skip));
+    this.query = this.query.skip(skip).limit(limit);
     // console.log("page = ", page, " limit = ", limit, " skip = ", skip)
-
     return this;
   }
-  skip() {
-    this.query = this.query.skip(this.queryString.skip);
-    return this;
-  }
+  // skip() {
+  //   this.query = this.query.skip(this.queryString.skip);
+  //   return this;
+  // }
 }
 
 module.exports = APIFeatures;

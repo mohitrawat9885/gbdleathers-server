@@ -75,8 +75,8 @@ exports.getAll = (Model, popOptions) =>
       .filter()
       .sort()
       .limitFields()
-      // .paginate()
-      .skip();
+      .paginate()
+  
 
     // const doc = await features.query.explain();
     let query = features.query;
@@ -86,18 +86,17 @@ exports.getAll = (Model, popOptions) =>
       query.find(filterActive)
     }
 
-    const page = req?.query?.page * 1 || 1;
-    const limit = req?.query?.limit * 1 || 100;
-    const skip = (page - 1) * limit;
+    // const page = req?.query?.page * 1 || 1;
+    // const limit = req?.query?.limit * 1 || 100;
+    // const skip = (page - 1) * limit;
 
-    // console.log("page = ", page, " limit = ", limit, " skip = ", skip)
+    // // console.log("page = ", page, " limit = ", limit, " skip = ", skip)
 
-    query.limit(parseInt(limit)).skip(parseInt(skip));
+    // query.limit(parseInt(limit)).skip(parseInt(skip));
     
     
     if (popOptions) query.populate(popOptions);
     const doc = await query;
-
     res.status(201).json({
       status: 'success',
       result: doc.length,
