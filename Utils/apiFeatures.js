@@ -10,7 +10,7 @@ class APIFeatures {
     excludedFields.forEach((el) => delete queryObj[el]);
 
     let queryStr = JSON.stringify(queryObj);
-    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `${match}`);
+    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
 
     this.query = this.query.find(JSON.parse(queryStr));
 
@@ -38,10 +38,14 @@ class APIFeatures {
     return this;
   }
   paginate() {
+    
     const page = this.queryString.page * 1 || 1;
     const limit = this.queryString.limit * 1 || 100;
     const skip = (page - 1) * limit;
-    this.query = this.query.skip(skip).limit(limit);
+
+    this.query = this.query.limit(parseInt(limit)).skip(parseInt(skip));
+    // console.log("page = ", page, " limit = ", limit, " skip = ", skip)
+
     return this;
   }
   skip() {

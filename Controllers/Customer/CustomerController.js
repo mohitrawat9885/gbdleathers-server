@@ -94,6 +94,7 @@ exports.getme = catchAsync(async (req, res, next) => {
 
 exports.addToCart = catchAsync(async (req, res, next) => {
   // console.log('Cart', req.body);
+
   let doc = await Cart.findOne({
     customer: req.body.customer,
     product: req.body.product,
@@ -103,6 +104,7 @@ exports.addToCart = catchAsync(async (req, res, next) => {
     onModel: '',
     customer: req.customer._id,
     quantity: req.body.quantity ? req.body.quantity : 1,
+    multi_properties: req.body.multi_properties
   };
   let doc2 = await Products.findById(req.body.product);
     if (doc2) {
@@ -115,6 +117,7 @@ exports.addToCart = catchAsync(async (req, res, next) => {
         return next(new AppError('No Product exists with this Id.', 404));
       }
     }
+    // console.log("Product is ", doc2)
     if(newCartItem.quantity >= 0 && doc2.stock === 0 ){
       return next(new AppError('Not enough stock', 404));
     }

@@ -40,7 +40,7 @@ exports.createOne = (Model) =>
         data: doc,
       },
     });
-  });
+});
 
 exports.getOne = (Model, popOptions) =>
   catchAsync(async (req, res, next) => {
@@ -63,17 +63,19 @@ exports.getAll = (Model, popOptions) =>
     let filter = {};
     if (req.params.id) filter = { t: req.params.id };
     // console.log(Model)
-
+    // console.log("query : ", req.query)
     // console.log(req.user)
     
     
     // console.log("All Products")
+    let numberOfDocs = await Model.count()
+    // console.log("Number of field are ", numberOfDocs)
 
     const features = new APIFeatures(Model.find(filter), req.query)
       .filter()
       .sort()
       .limitFields()
-      .paginate()
+      // .paginate()
       .skip();
 
     // const doc = await features.query.explain();
@@ -83,6 +85,14 @@ exports.getAll = (Model, popOptions) =>
       filterActive = {active: {$ne: false}}
       query.find(filterActive)
     }
+
+    const page = req?.query?.page * 1 || 1;
+    const limit = req?.query?.limit * 1 || 100;
+    const skip = (page - 1) * limit;
+
+    // console.log("page = ", page, " limit = ", limit, " skip = ", skip)
+
+    query.limit(parseInt(limit)).skip(parseInt(skip));
     
     
     if (popOptions) query.populate(popOptions);
@@ -91,6 +101,7 @@ exports.getAll = (Model, popOptions) =>
     res.status(201).json({
       status: 'success',
       result: doc.length,
+      totalDocument: numberOfDocs,
       data: doc,
     });
   });

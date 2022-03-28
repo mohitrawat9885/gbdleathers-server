@@ -18,6 +18,10 @@ const CartSchema = new mongoose.Schema(
       ref: 'Customers',
       required: [true, 'Customer is missing!'],
     },
+    multi_properties: {
+      type: Array,
+      default: []
+    },
     quantity: {
       type: Number,
       default: 1,

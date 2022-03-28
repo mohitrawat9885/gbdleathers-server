@@ -32,6 +32,7 @@ const VariantSchema = new mongoose.Schema(
     stock: {
       type: Number,
       min: 0,
+      default: 0,
     },
     active: {
       type: Boolean,
@@ -58,7 +59,7 @@ const VariantSchema = new mongoose.Schema(
     },
     ratingsAverage: {
       type: Number,
-      default: 0,
+      default: 4.5,
       min: [1, 'Rating must be above 1.0'],
       max: [5, 'Rating must be below 5.0'],
       set: (val) => Math.round(val * 10) / 10,
