@@ -68,7 +68,22 @@ exports.getAll = (Model, popOptions) =>
     
     
     // console.log("All Products")
-    let numberOfDocs = await Model.count()
+    let numberOfDocs;
+    if(req.user){
+      if(req?.query?.status){
+        numberOfDocs = await Model.countDocuments({status: req.query.status})
+      }
+      else{
+        numberOfDocs = await Model.countDocuments();
+      }
+    }
+
+      if(!req.user){
+        numberOfDocs = await Model.countDocuments({active: !false})
+      }
+  
+    
+    // console.log(req.query)
     // console.log("Number of field are ", numberOfDocs)
 
     const features = new APIFeatures(Model.find(filter), req.query)
@@ -76,7 +91,6 @@ exports.getAll = (Model, popOptions) =>
       .sort()
       .limitFields()
       .paginate()
-  
 
     // const doc = await features.query.explain();
     let query = features.query;
