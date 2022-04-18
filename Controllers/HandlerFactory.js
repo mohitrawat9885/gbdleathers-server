@@ -59,7 +59,6 @@ exports.getOne = (Model, popOptions) =>
 exports.getAll = (Model, popOptions) =>
   catchAsync(async (req, res, next) => {
     // To allow for nested GET reviews on tour(hack )
-
     let filter = {};
     if (req.params.id) filter = { t: req.params.id };
     // console.log(Model)
@@ -77,7 +76,6 @@ exports.getAll = (Model, popOptions) =>
         numberOfDocs = await Model.countDocuments();
       }
     }
-
       if(!req.user){
         numberOfDocs = await Model.countDocuments({active: !false})
       }

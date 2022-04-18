@@ -218,7 +218,7 @@ exports.addProductImages = catchAsync(async (req, res, next) => {
 });
 
 exports.getProductImages = catchAsync(async (req, res, next) => {
-  console.log(req.params);
+  // console.log(req.params);
   let doc = await Products.findOne({ _id: req.params.id });
   if (!doc) {
     doc = await Variants.findOne({ _id: req.params.id });
@@ -274,8 +274,8 @@ exports.getVariant = catchAsync(async (req, res, next) => {
   let doc = await Variants.findOne({
     properties: req.query,
   });
-  console.log('Variants', req.params);
-  console.log(req.query);
+  // console.log('Variants', req.params);
+  // console.log(req.query);
   res.status(200).json({
     status: 'success',
     data: {

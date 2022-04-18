@@ -96,7 +96,7 @@ exports.getReview = catchAsync(async (req, res, next) => {
     customer: req.body.customer,
   });
 
-  const doc = await query;
+  let doc = await query;
   if (!doc) {
     doc = [];
   }
@@ -111,7 +111,7 @@ exports.getAllReview = catchAsync(async (req, res, next) => {
     product: req.params.productId,
   });
 
-  const doc = await query;
+ let doc = await query.sort("-created_at");
   if (!doc) {
     doc = [];
   }
