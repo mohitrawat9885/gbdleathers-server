@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const slugify = require("slugify");
 
-const CategorySchema = new mongoose.Schema(
+const WorkshopSchema = new mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.ObjectId,
@@ -13,12 +13,18 @@ const CategorySchema = new mongoose.Schema(
     },
     name: {
       type: String,
-      unique: [true, "Please give unique name to each category!"],
-      required: [true, "Please give any name to your new Category"],
+      unique: [true, "Please give unique name to each workshop."],
+      required: [true, "Please give any name to new workshop."],
     },
-    image: {
+    summary: {
       type: String,
-      default: "gbdleathers_category_default_image.jpg",
+    },
+    banner: {
+      type: String,
+    },
+    images: {
+      type: Array,
+      default: [],
     },
     slug: {
       type: String,
@@ -27,6 +33,13 @@ const CategorySchema = new mongoose.Schema(
     active: {
       type: Boolean,
       default: false,
+    },
+    date: {
+      type: Date,
+      required: [true, "Workshop must have a date."],
+    },
+    location: {
+      type: String,
     },
     created_at: {
       type: Date,
@@ -43,17 +56,17 @@ const CategorySchema = new mongoose.Schema(
   }
 );
 
-CategorySchema.virtual("products", {
-  ref: "Products",
-  foreignField: "category",
+WorkshopSchema.virtual("participants", {
+  ref: "Participants",
+  foreignField: "workshop",
   localField: "_id",
 });
 
-CategorySchema.pre("save", function (next) {
+WorkshopSchema.pre("save", function (next) {
   this.slug = slugify(this.name, { lower: true });
   next();
 });
 
-const Categorys = mongoose.model("Categorys", CategorySchema);
+const Workshops = mongoose.model("Workshops", WorkshopSchema);
 
-module.exports = Categorys;
+module.exports = Workshops;
