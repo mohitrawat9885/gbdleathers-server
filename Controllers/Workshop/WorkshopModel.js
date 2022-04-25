@@ -34,9 +34,25 @@ const WorkshopSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    date: {
+    price: {
+      type: Number,
+      required: [true, "Workshop price is missing!"],
+    },
+    limit: {
+      type: Number,
+      required: [true, "Workshop Limit is missing!"],
+    },
+    days: {
+      type: Array,
+      min: 1,
+    },
+    start: {
       type: Date,
-      required: [true, "Workshop must have a date."],
+      required: [true, "Workshop must have a starting Date/Time."],
+    },
+    end: {
+      type: Date,
+      required: [true, "Workshop must have a ending Date/Time."],
     },
     location: {
       type: String,

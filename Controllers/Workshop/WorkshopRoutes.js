@@ -8,15 +8,18 @@ router
   .post(
     WorkshopController.uploadWorkshopImages,
     WorkshopController.resizeWorkshopImages,
+    WorkshopController.preCreateWorkshop,
     WorkshopController.createWorkshop
-  )
-  .get(WorkshopController.getAllWorkshops);
+  );
+
+router.route("/:type").get(WorkshopController.getAllWorkshops);
 router
   .route("/:id")
   .get(WorkshopController.getWorkshop)
   .patch(
     WorkshopController.uploadWorkshopImages,
     WorkshopController.resizeWorkshopImages,
+    WorkshopController.preCreateWorkshop,
     WorkshopController.updateWorkshop
   )
   .delete(WorkshopController.removeWorkshop);

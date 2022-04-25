@@ -57,9 +57,9 @@ app.use(cookieParser());
 app.use(mongoSanitize());
 app.use(xss());
 app.use(
-    hpp({
-        whitelist: ["duration", "ratingsQuantity", "price"],
-    })
+  hpp({
+    whitelist: ["duration", "ratingsQuantity", "price"],
+  })
 );
 app.use(compression());
 
@@ -79,7 +79,7 @@ app.use(globalErrorHandler);
 
 app.use(express.static(path.join(__dirname, "public/build")));
 app.get("/*", function (req, res) {
-    res.sendFile(path.join(__dirname, "public/build", "index.html"));
+  res.sendFile(path.join(__dirname, "public/build", "index.html"));
 });
 
 module.exports = app;

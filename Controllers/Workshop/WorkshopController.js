@@ -30,7 +30,7 @@ exports.uploadWorkshopImages = upload.fields([
 exports.resizeWorkshopImages = catchAsync(async (req, res, next) => {
   if (!req.files) return next();
   if (req.files.banner) {
-    req.body.banner = `banner-${req.params.id}-${
+    req.body.banner = `workshop-banner-${Date.now()}-${
       req.user._id
     }-${Date.now()}.jpeg`;
     await sharp(req.files.banner[0].buffer)
@@ -48,7 +48,6 @@ exports.resizeWorkshopImages = catchAsync(async (req, res, next) => {
         const filename = `workshop-images-${req.params.id}-${Date.now()}-${
           i + 1
         }.jpeg`;
-
         await sharp(file.buffer)
           .resize(1200, 1200)
           .toFormat("jpeg")
@@ -61,11 +60,24 @@ exports.resizeWorkshopImages = catchAsync(async (req, res, next) => {
   next();
 });
 
+exports.preCreateWorkshop = catchAsync(async (req, res, next) => {
+  for (let i in req.body.days) {
+    req.body.days[i] = JSON.parse(req.body.days[i]);
+    // console.log(req.body.days[i]);
+  }
+  req.body.start = req.body.days[0].start;
+  req.body.end = req.body.days[req.body.days.length - 1].end;
+  // console.log(req.body.days);
+
+  next();
+});
 exports.createWorkshop = factory.createOne(Workshops);
 
-exports.getAllWorkshops = factory.getAll(Workshops);
+exports.getAllWorkshops = factory.getAll(Workshops, { path: "participants" });
 
 exports.getWorkshop = factory.getOne(Workshops, { path: "participants" });
+
+exports.getClientWorkshop = factory.getAll(Workshops);
 // , { path: "participants" }
 
 exports.updateWorkshop = factory.updateOne(Workshops);
@@ -126,6 +138,7 @@ exports.removeWorkshopImage = catchAsync(async (req, res, next) => {
 });
 
 exports.createParticipant = factory.createOne(Participants);
+
 exports.getAllParticipants = factory.getAll(Participants);
 exports.getParticipant = factory.getOne(Participants);
 exports.updateParticipant = factory.updateOne(Participants);
