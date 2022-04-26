@@ -6,6 +6,7 @@ const ProductController = require("./../Controllers/Product/ProductController");
 const CategoryController = require("./../Controllers/Category/CategoryController");
 const ReviewController = require("./../Controllers/Reviews/ReviewController");
 const WorkshopController = require("./../Controllers/Workshop/WorkshopController");
+const ContactUsController = require("./../Controllers/ContactUs/ContactUsController");
 
 const router = express.Router();
 
@@ -22,6 +23,8 @@ router.get("/category/:id", CategoryController.getCategory);
 router.get("/reviews/:productId", ReviewController.getAllReview);
 router.route("/workshop/:type").get(WorkshopController.getClientWorkshop);
 router.route("/workshop").post(WorkshopController.createParticipant);
+
+router.route("/contact-us").post(ContactUsController.createContactUs);
 // Protect Rest all routes
 router.use(CustomerAuthentication.protect);
 router.use("/customer/reviews", ReviewRoutes);
