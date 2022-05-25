@@ -1,3 +1,5 @@
+const Cart = require("./Customer/CartModel");
+
 const catchAsync = require(`${__dirname}/../Utils/catchAsync`);
 const AppError = require(`${__dirname}/../Utils/appError`);
 const APIFeatures = require(`${__dirname}/../Utils/apiFeatures`);
@@ -115,16 +117,33 @@ exports.getAll = (Model, popOptions) =>
         query.find({ end: { $gte: new Date() } });
       }
     }
-    // const page = req?.query?.page * 1 || 1;
-    // const limit = req?.query?.limit * 1 || 100;
-    // const skip = (page - 1) * limit;
-
-    // // console.log("page = ", page, " limit = ", limit, " skip = ", skip)
-
-    // query.limit(parseInt(limit)).skip(parseInt(skip));
 
     if (popOptions) query.populate(popOptions);
-    const doc = await query;
+
+    let doc = await query;
+    if (req.body.for === "cart") {
+      // let newDoc = [];
+      // console.log(doc);
+      doc = doc.filter(async (d) => {
+        if (!d.product || Object.keys(d.product).length === 0) {
+          await Cart.findByIdAndDelete(d._id);
+        }
+      });
+      // console.log(doc);
+      // for (let i = 0; i < doc.length; i++) {
+
+      //   // console.log(doc[i].product, Object.keys(doc[i]).length);
+      //   // if (!doc[i].product || !doc[i].product._id) {
+      //   //   // console.log(doc[i]);
+      //   //   // await Cart.deleteOne({ _id: doc._id, customer: req.customer.id });
+      //   //   continue;
+      //   // }
+      //   // newDoc.push(doc[i]);
+      // }
+      // doc = newDoc;
+      // console.log(req.customer);
+    }
+
     res.status(201).json({
       status: "success",
       result: doc.length,

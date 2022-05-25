@@ -5,8 +5,8 @@ const https = require("https");
 const fs = require("fs");
 
 process.on("uncaughtException", (err) => {
-  console.log("UNCAUGHT EXCEPTION ☠️☠️☠️ Shutting down...");
-  console.log(err.name, err.message);
+  // console.log("UNCAUGHT EXCEPTION ☠️☠️☠️ Shutting down...");
+  // console.log(err.name, err.message);
   process.exit(1);
 });
 
@@ -20,7 +20,7 @@ const DB = process.env.DATABASE.replace(
   process.env.DATABASE_PASSWORD
 );
 const DB_L = process.env.DATABASE_LOCAL;
-mongoose.connect(DB_L).then(() => {
+mongoose.connect(DB).then(() => {
   console.log("Database Connected Successfully!");
 });
 

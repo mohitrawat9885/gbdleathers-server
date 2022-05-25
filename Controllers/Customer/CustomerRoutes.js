@@ -1,45 +1,48 @@
-const express = require('express');
-const CustomerAuthentication = require('./../CustomerAuthentication');
-const CustomerController = require('./CustomerController');
-const OrderController = require('../Orders/OrderController');
+const express = require("express");
+const CustomerAuthentication = require("./../CustomerAuthentication");
+const CustomerController = require("./CustomerController");
+const OrderController = require("../Orders/OrderController");
 
 const router = express.Router();
 
-router.post('/signup', CustomerAuthentication.signup);
-router.post('/login', CustomerAuthentication.login);
-router.get('/logout', CustomerAuthentication.logout);
-router.post('/forgotPassword', CustomerAuthentication.forgotPassword);
-router.patch('/resetPassword/:token', CustomerAuthentication.resetPassword);
+router.post("/signup", CustomerAuthentication.signup);
+router.post("/login", CustomerAuthentication.login);
+router.get("/logout", CustomerAuthentication.logout);
+router.post("/forgotPassword", CustomerAuthentication.forgotPassword);
+router.patch("/resetPassword/:token", CustomerAuthentication.resetPassword);
 
 router.use(CustomerAuthentication.protect);
 
-router.patch('/updateMyPassword', CustomerAuthentication.updatePassword);
-router.patch('/updateMe', CustomerController.updateMe);
+router.patch("/updateMyPassword", CustomerAuthentication.updatePassword);
+router.patch("/updateMe", CustomerController.updateMe);
 
-router.get('/getme', CustomerController.getme);
+router.get("/getme", CustomerController.getme);
 router
-  .route('/address')
+  .route("/address")
   .post(CustomerController.createAddress)
   .get(CustomerController.getAddress);
 router
-  .route('/address/:id')
+  .route("/address/:id")
   .patch(CustomerController.updateAddress)
   .delete(CustomerController.deleteAddress);
 
 router
-  .route('/cart')
+  .route("/cart")
   .post(CustomerController.addToCart)
-  .get(CustomerController.getAllFromCart);
+  .get((req, res, next) => {
+    req.body.for = "cart";
+    next();
+  }, CustomerController.getAllFromCart);
 
 router
-  .route('/cart/:id')
+  .route("/cart/:id")
   // .get(CustomerController.getOneFromCart)
   .patch(CustomerController.updateOneFromCart)
   .delete(CustomerController.deleteOneFromCart);
-router.route('/orders').get(OrderController.getMyOrders);
+router.route("/orders").get(OrderController.getMyOrders);
 
 router
-  .route('/checkout')
+  .route("/checkout")
   .post(OrderController.createCheckoutData, OrderController.getCheckoutSession);
 
 module.exports = router;
