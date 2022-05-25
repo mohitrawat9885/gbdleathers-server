@@ -240,54 +240,58 @@ exports.addToCart = catchAsync(async (req, res, next) => {
   });
 });
 
-// exports.getAllFromCart = factory.getAll(Cart, { path: "product" });
+exports.getAllFromCart = factory.getAll(Cart, { path: "product" });
 
-exports.getAllFromCart = catchAsync(async (req, res, next) => {
-  const features = new APIFeatures(
-    Cart.find({ customer: req.customer._id }),
-    req.query
-  )
-    .filter()
-    .sort()
-    .limitFields()
-    .paginate();
-  // .skip();
+// exports.getAllFromCart = catchAsync(async (req, res, next) => {
+//   const features = new APIFeatures(
+//     Cart.find({ customer: req.customer._id }),
+//     req.query
+//   )
+//     .filter()
+//     .sort()
+//     .limitFields()
+//     .paginate();
+//   // .skip();
 
-  let query = features.query;
-  query.populate({ path: "product" });
-  let doc = await query;
+//   let query = features.query;
+//   query.populate({ path: "product" });
+//   let doc = await query;
+//   let newDoc = new Array(doc);
 
-  for (let i = 0; i < doc.length; i++) {
-    if (doc[i].onModel === "Variants") {
-      let product = doc[i].product;
-      let variant_of = product.variant_of;
-      product.subName = product.name;
-      product.name = variant_of.name;
+//   for (let i = 0; i < newDoc.length; i++) {
+//     if (newDoc[i].onModel === "Variants") {
+//       let product = newDoc[i].product;
+//       console.log(product);
+//       let variant_of = product.variant_of;
+//       product.subName = product.name;
+//       product.name = variant_of.name;
 
-      if (!product.category) product.category = variant_of.category;
-      if (!product.front_image)
-        product.front_image =
-          variant_of.front_image || variant_of.images[0] || "";
-      if (!product.back_image)
-        product.back_image =
-          variant_of.back_image || variant_of.images[1] || "";
-      if (!product.price) product.price = variant_of.price;
-      if (!product.stock) product.stock = variant_of.stock;
-      if (!product.summary) product.summary = variant_of.summary;
-      if (!product.description) product.description = variant_of.description;
-      if (!product.images && product.images.length < 1)
-        product.images = variant_of.images;
+//       if (!product.category) product.category = variant_of.category;
+//       if (!product.front_image)
+//         product.front_image =
+//           variant_of.front_image || variant_of.images[0] || "";
+//       if (!product.back_image)
+//         product.back_image =
+//           variant_of.back_image || variant_of.images[1] || "";
+//       if (!product.price) product.price = variant_of.price;
+//       if (!product.stock) product.stock = variant_of.stock;
+//       if (!product.summary) product.summary = variant_of.summary;
+//       if (!product.description) product.description = variant_of.description;
+//       if (!product.images && product.images.length < 1)
+//         product.images = variant_of.images;
 
-      doc[i].product = product;
-    }
-  }
+//       newDoc[i].product = product;
+//       console.log(product);
+//     }
+//   }
+//   // console.log(doc);
 
-  res.status(201).json({
-    status: "success",
-    result: doc.length,
-    data: doc,
-  });
-});
+//   res.status(200).json({
+//     status: "success",
+//     result: newDoc.length,
+//     data: newDoc,
+//   });
+// });
 
 exports.updateOneFromCart = factory.updateOne(Cart);
 exports.deleteOneFromCart = factory.deleteOne(Cart);
