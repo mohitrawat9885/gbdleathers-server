@@ -1,23 +1,23 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const VariantSchema = new mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.ObjectId,
-      ref: 'User',
+      ref: "User",
       required: [
         true,
-        'User details are missing. Please logout and then login again!',
+        "User details are missing. Please logout and then login again!",
       ],
     },
     variant_of: {
       type: mongoose.Schema.ObjectId,
-      ref: 'Products',
+      ref: "Products",
       // ref: 'Variants',
     },
     category: {
       type: mongoose.Schema.ObjectId,
-      ref: 'Categorys',
+      ref: "Categorys",
     },
     name: {
       type: String,
@@ -60,8 +60,8 @@ const VariantSchema = new mongoose.Schema(
     ratingsAverage: {
       type: Number,
       default: 4.5,
-      min: [1, 'Rating must be above 1.0'],
-      max: [5, 'Rating must be below 5.0'],
+      min: [1, "Rating must be above 1.0"],
+      max: [5, "Rating must be below 5.0"],
       set: (val) => Math.round(val * 10) / 10,
     },
     ratingsQuantity: {
@@ -91,16 +91,16 @@ const VariantSchema = new mongoose.Schema(
 
 VariantSchema.pre(/^find/, function (next) {
   this.populate({
-    path: 'variant_of',
+    path: "variant_of",
   });
   next();
 });
-VariantSchema.virtual('reviews', {
-  ref: 'Reviews',
-  foreignField: 'product',
-  localField: '_id',
+VariantSchema.virtual("reviews", {
+  ref: "Reviews",
+  foreignField: "product",
+  localField: "_id",
 });
 
-const Variants = mongoose.model('Variants', VariantSchema);
+const Variants = mongoose.model("Variants", VariantSchema);
 
 module.exports = Variants;

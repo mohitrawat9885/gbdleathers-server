@@ -1,26 +1,26 @@
-const mongoose = require('mongoose');
-const validator = require('validator');
+const mongoose = require("mongoose");
+// const validator = require("validator");
 
 const CartSchema = new mongoose.Schema(
   {
     product: {
       type: mongoose.Schema.ObjectId,
-      refPath: 'onModel',
-      required: [true, 'Product is missing!'],
+      refPath: "onModel",
+      required: [true, "Product is missing!"],
     },
     onModel: {
       type: String,
       required: true,
-      enum: ['Products', 'Variants'],
+      enum: ["Products", "Variants"],
     },
     customer: {
       type: mongoose.Schema.ObjectId,
-      ref: 'Customers',
-      required: [true, 'Customer is missing!'],
+      ref: "Customers",
+      required: [true, "Customer is missing!"],
     },
     multi_properties: {
       type: Array,
-      default: []
+      default: [],
     },
     quantity: {
       type: Number,
@@ -42,8 +42,8 @@ const CartSchema = new mongoose.Schema(
   }
 );
 
-CartSchema.index({ product: 1, customer: 1 }, { unique: true });
+CartSchema.index({ product: 1, customer: 1 }, { unique: false });
 
-const Cart = mongoose.model('Cart', CartSchema);
+const Cart = mongoose.model("Cart", CartSchema);
 
 module.exports = Cart;

@@ -20,7 +20,7 @@ const DB = process.env.DATABASE.replace(
   process.env.DATABASE_PASSWORD
 );
 const DB_L = process.env.DATABASE_LOCAL;
-mongoose.connect(DB_L).then(() => {
+mongoose.connect(DB).then(() => {
   console.log("Database Connected Successfully!");
 });
 
