@@ -101,7 +101,7 @@ exports.getAll = (Model, popOptions) =>
       if (req.params.type == "previous") {
         query.find({ start: { $lte: new Date() } });
       } else if (req.params.type == "upcoming") {
-        query.find({ start: { $gte: new Date() } });
+        query.find({ end: { $gte: new Date() } });
       }
     }
     // const page = req?.query?.page * 1 || 1;
