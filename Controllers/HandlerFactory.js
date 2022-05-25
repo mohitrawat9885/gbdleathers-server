@@ -46,12 +46,23 @@ exports.createOne = (Model) =>
 
 exports.getOne = (Model, popOptions) =>
   catchAsync(async (req, res, next) => {
+    // if(req.user){
+    //   this
+    // }
+    // console.log("Before", this);
+
     let query = Model.findById(req.params.id);
+
     if (popOptions) query = query.populate(popOptions);
-    const doc = await query;
+    if (!req.user) {
+      filterActive = { active: { $ne: false } };
+      query.find(filterActive);
+    }
+    doc = await query;
     if (!doc) {
       return next(new AppError("No Doc found with that ID", 404));
     }
+
     res.status(200).json({
       status: "success",
       data: doc,

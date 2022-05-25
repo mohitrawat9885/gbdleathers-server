@@ -1,20 +1,20 @@
-const mongoose = require('mongoose');
-const multer = require('multer');
-const sharp = require('sharp');
-const factory = require('../HandlerFactory');
-const catchAsync = require('../../Utils/catchAsync');
-const AppError = require('../../Utils/appError');
-const Products = require('./ProductModel');
-const Variants = require('./VariantModel');
-const Cart = require('../Customer/CartModel');
+const mongoose = require("mongoose");
+const multer = require("multer");
+const sharp = require("sharp");
+const factory = require("../HandlerFactory");
+const catchAsync = require("../../Utils/catchAsync");
+const AppError = require("../../Utils/appError");
+const Products = require("./ProductModel");
+const Variants = require("./VariantModel");
+const Cart = require("../Customer/CartModel");
 
 const multerStorage = multer.memoryStorage();
 
 const multerFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith('image')) {
+  if (file.mimetype.startsWith("image")) {
     cb(null, true);
   } else {
-    cb(new AppError('Not an image! Please upload only images.', 400), false);
+    cb(new AppError("Not an image! Please upload only images.", 400), false);
   }
 };
 
@@ -24,9 +24,9 @@ const upload = multer({
 });
 
 exports.uploadProductImages = upload.fields([
-  { name: 'front_image', maxCount: 1 },
-  { name: 'back_image', maxCount: 1 },
-  { name: 'images' },
+  { name: "front_image", maxCount: 1 },
+  { name: "back_image", maxCount: 1 },
+  { name: "images" },
 ]);
 
 // upload.single('image')
@@ -41,7 +41,7 @@ exports.resizeProductImages = catchAsync(async (req, res, next) => {
     }-${Date.now()}.jpeg`;
     await sharp(req.files.front_image[0].buffer)
       .resize(1200, 1200)
-      .toFormat('jpeg')
+      .toFormat("jpeg")
       .jpeg({ quality: 100 })
       .toFile(`public/images/${req.body.front_image}`);
   }
@@ -51,7 +51,7 @@ exports.resizeProductImages = catchAsync(async (req, res, next) => {
     }-${Date.now()}.jpeg`;
     await sharp(req.files.back_image[0].buffer)
       .resize(1200, 1200)
-      .toFormat('jpeg')
+      .toFormat("jpeg")
       .jpeg({ quality: 100 })
       .toFile(`public/images/${req.body.back_image}`);
   }
@@ -65,7 +65,7 @@ exports.resizeProductImages = catchAsync(async (req, res, next) => {
 
         await sharp(file.buffer)
           .resize(1200, 1200)
-          .toFormat('jpeg')
+          .toFormat("jpeg")
           .jpeg({ quality: 100 })
           .toFile(`public/images/${filename}`);
         req.body.images.push(filename);
@@ -88,7 +88,7 @@ exports.createProduct = catchAsync(async (req, res, next) => {
   req.body.user = req.user._id;
   const doc = await Products.create(req.body);
   res.status(201).json({
-    status: 'success',
+    status: "success",
     data: {
       data: doc,
     },
@@ -97,32 +97,42 @@ exports.createProduct = catchAsync(async (req, res, next) => {
 
 exports.getAllProduct = factory.getAll(Products);
 
-
-exports.getProduct = factory.getOne(Products, { path: 'variants' });
+exports.getProduct = factory.getOne(Products, { path: "variants" });
 
 exports.getProduct = catchAsync(async (req, res, next) => {
   let doc = await Products.findById(req.params.id)
     .populate({
-      path: 'variants',
+      path: "variants",
     })
-    .populate({ path: 'reviews' });
+    .populate({ path: "reviews" });
   if (!doc) {
     doc = await Variants.findById(req.params.id)
       .populate({
-        path: 'variant_of',
+        path: "variant_of",
       })
-      .populate({ path: 'reviews' });
+      .populate({ path: "reviews" });
   }
-
+  // console.log(doc);
+  if (!req.user) {
+    if (doc?.active === false) doc = {};
+    if (doc.variants || doc.variants.length >= 1) {
+      doc.variants = doc.variants.filter((v) => {
+        if (v.active === false) {
+          return false;
+        }
+        return true;
+      });
+    }
+  }
+  // console.log(doc);
   res.status(200).json({
-    status: 'success',
+    status: "success",
     data: doc,
   });
 });
 // exports.updateProduct = factory.updateOne(Products);
 
 exports.updateProduct = catchAsync(async (req, res, next) => {
-  // console
   req.body.user = req.user._id;
   if (req.body.multi_properties) {
     req.body.multi_properties = JSON.parse(req.body.multi_properties);
@@ -141,12 +151,12 @@ exports.updateProduct = catchAsync(async (req, res, next) => {
     });
     if (!doc) {
       return next(
-        new AppError('No Product or Variant found with that ID', 404)
+        new AppError("No Product or Variant found with that ID", 404)
       );
     }
   }
   res.status(200).json({
-    status: 'success',
+    status: "success",
     data: {
       data: doc,
     },
@@ -160,11 +170,11 @@ exports.removeProduct = catchAsync(async (req, res, next) => {
   if (!doc) {
     doc = await Variants.findByIdAndDelete(req.params.id);
     if (!doc) {
-      return next(new AppError('No document found with that ID', 404));
+      return next(new AppError("No document found with that ID", 404));
     }
   }
   res.status(204).json({
-    status: 'success',
+    status: "success",
     data: null,
   });
 });
@@ -172,14 +182,14 @@ exports.createProductVariant = catchAsync(async (req, res, next) => {
   req.body.user = req.user._id;
   let doc = await Products.findById(req.params.id);
   if (!doc) {
-    return next(new AppError('No Product found with that ID', 404));
+    return next(new AppError("No Product found with that ID", 404));
   }
   req.body.category = doc.category;
   req.body.variant_of = doc._id;
 
   doc = await Variants.create(req.body);
   res.status(201).json({
-    status: 'success',
+    status: "success",
     data: {
       data: doc,
     },
@@ -210,7 +220,7 @@ exports.addProductImages = catchAsync(async (req, res, next) => {
     );
   }
   res.status(200).json({
-    status: 'success',
+    status: "success",
     data: {
       data: doc.images ? doc.images : [],
     },
@@ -224,7 +234,7 @@ exports.getProductImages = catchAsync(async (req, res, next) => {
     doc = await Variants.findOne({ _id: req.params.id });
   }
   res.status(200).json({
-    status: 'success',
+    status: "success",
     data: {
       data: doc.images ? doc.images : [],
     },
@@ -257,7 +267,7 @@ exports.removeProductImage = catchAsync(async (req, res, next) => {
     );
   }
   res.status(200).json({
-    status: 'success',
+    status: "success",
     data: {
       data: doc.images,
     },
@@ -277,7 +287,7 @@ exports.getVariant = catchAsync(async (req, res, next) => {
   // console.log('Variants', req.params);
   // console.log(req.query);
   res.status(200).json({
-    status: 'success',
+    status: "success",
     data: {
       data: doc,
     },

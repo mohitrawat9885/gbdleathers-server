@@ -48,10 +48,35 @@ exports.createCategory = catchAsync(async (req, res, next) => {
 });
 
 exports.getAllCategory = factory.getAll(Categorys);
+// exports.filterCategory =
 
 exports.getAllCategoryProduct = factory.getAll(Categorys, { path: "products" });
 
-exports.getCategory = factory.getOne(Categorys, { path: "products" });
+// exports.getCategory = factory.getOne(Categorys, { path: "products" });
+
+exports.getCategory = catchAsync(async (req, res, next) => {
+  let query = Categorys.findById(req.params.id);
+
+  query = query.populate({ path: "products" });
+  doc = await query;
+  if (!doc) {
+    return next(new AppError("No Doc found with that ID", 404));
+  }
+
+  if (!req.user) {
+    doc.products = doc.products.filter((p) => {
+      if (p.active === false) {
+        return false;
+      }
+      return true;
+    });
+  }
+  res.status(200).json({
+    status: "success",
+    data: doc,
+  });
+});
+
 // exports.updateCategory = factory.updateOne(Categorys);
 exports.updateCategory = catchAsync(async (req, res, next) => {
   const doc = await Categorys.findByIdAndUpdate(req.params.id, req.body, {

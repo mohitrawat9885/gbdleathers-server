@@ -1,23 +1,23 @@
-const mongoose = require('mongoose');
-const slugify = require('slugify');
+const mongoose = require("mongoose");
+const slugify = require("slugify");
 
 const ProductSchema = new mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.ObjectId,
-      ref: 'Users',
+      ref: "Users",
       required: [
         true,
-        'User details are missing. Please logout and then login again!',
+        "User details are missing. Please logout and then login again!",
       ],
     },
     category: {
       type: mongoose.Schema.ObjectId,
-      ref: 'Categorys',
+      ref: "Categorys",
     },
     name: {
       type: String,
-      required: [true, 'Product should have a name!'],
+      required: [true, "Product should have a name!"],
     },
     front_image: String,
     back_image: String,
@@ -56,8 +56,8 @@ const ProductSchema = new mongoose.Schema(
     ratingsAverage: {
       type: Number,
       default: 4.5,
-      min: [1, 'Rating must be above 1.0'],
-      max: [5, 'Rating must be below 5.0'],
+      min: [1, "Rating must be above 1.0"],
+      max: [5, "Rating must be below 5.0"],
       set: (val) => Math.round(val * 10) / 10,
     },
     ratingsQuantity: {
@@ -85,30 +85,30 @@ const ProductSchema = new mongoose.Schema(
 // });
 
 //  Virtual populate
-ProductSchema.virtual('reviews', {
-  ref: 'Reviews',
-  foreignField: 'product',
-  localField: '_id',
+ProductSchema.virtual("reviews", {
+  ref: "Reviews",
+  foreignField: "product",
+  localField: "_id",
 });
 
-ProductSchema.pre('save', function (next) {
+ProductSchema.pre("save", function (next) {
   this.slug = slugify(this.name, { lower: true });
   next();
 });
 
 ProductSchema.pre(/^find/, function (next) {
   this.populate({
-    path: 'category',
-    select: '_id name',
+    path: "category",
+    select: "_id name",
   });
   next();
 });
-ProductSchema.virtual('variants', {
-  ref: 'Variants',
-  foreignField: 'variant_of',
-  localField: '_id',
+ProductSchema.virtual("variants", {
+  ref: "Variants",
+  foreignField: "variant_of",
+  localField: "_id",
 });
 
-const Products = mongoose.model('Products', ProductSchema);
+const Products = mongoose.model("Products", ProductSchema);
 
 module.exports = Products;
