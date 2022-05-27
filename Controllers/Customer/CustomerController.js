@@ -166,7 +166,7 @@ exports.addToCart = catchAsync(async (req, res, next) => {
           !doc[i].multi_properties ||
           newCartItem.multi_properties.length !== doc[i].multi_properties.length
         ) {
-          console.log("pass 2");
+          // console.log("pass 2");
           continue;
         }
         let testObj1 = {};
@@ -177,7 +177,7 @@ exports.addToCart = catchAsync(async (req, res, next) => {
           testObj2[newCartItem.multi_properties[j].name] =
             newCartItem.multi_properties[j].value;
         }
-        console.log("Cooo", testObj1, testObj2);
+        // console.log("Cooo", testObj1, testObj2);
         matched = true;
         for (let k in testObj1) {
           if (testObj1[k] !== testObj2[k]) {
