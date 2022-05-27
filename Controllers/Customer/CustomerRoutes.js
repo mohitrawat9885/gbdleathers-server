@@ -45,4 +45,6 @@ router
   .route("/checkout")
   .post(OrderController.createCheckoutData, OrderController.getCheckoutSession);
 
+router.route("/success").get(OrderController.paymentSuccess);
+
 module.exports = router;

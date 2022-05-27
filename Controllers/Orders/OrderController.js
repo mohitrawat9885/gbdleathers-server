@@ -10,7 +10,14 @@ const OrderProducts = require("./OrderProductModel");
 const AppError = require("../../Utils/appError");
 const Products = require("../Product/ProductModel");
 const Variants = require("../Product/VariantModel");
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+// const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+
+const paypal = require("paypal-rest-sdk");
+paypal.configure({
+  mode: "sandbox", //sandbox or live
+  client_id: process.env.CLIENT_ID,
+  client_secret: process.env.CLIENT_SECRET,
+});
 
 exports.createCheckoutData = catchAsync(async (req, res, next) => {
   if (!req.customer._id) {
@@ -112,16 +119,12 @@ exports.createCheckoutData = catchAsync(async (req, res, next) => {
       price: cart[i].product.price,
       quantity: cart[i].quantity,
       properties: product_properties,
+      summary: cart[i].summary,
       status: "ordered",
     };
     totalCost = totalCost + cart[i].quantity * productObj.price;
     products.push(productObj);
   }
-  // console.log(products)
-  // return res.status(200).json({
-  //   status: 'success',
-  //   message: 'Your Order has been received.',
-  // });
 
   let order = {
     products: products,
@@ -143,7 +146,8 @@ exports.createCheckoutData = catchAsync(async (req, res, next) => {
       phone: address.phone,
     },
     status: "ordered",
-    payment: "online",
+    payment: "pending",
+    paymentId: "",
     ordered_at: Date.now(),
     total_cost: {
       value: totalCost.toFixed(2),
@@ -151,62 +155,88 @@ exports.createCheckoutData = catchAsync(async (req, res, next) => {
     },
   };
   req.order = order;
-  setOrderData(req.order);
-  return res.status(200).json({
-    status: "success",
-    message: "Your Order has been received.",
-    payment_url: "/my-account/?option=orders",
-  });
-  // next();
+  next();
 });
 
 exports.getCheckoutSession = catchAsync(async (req, res, next) => {
+  const order = req.order;
   let item_Array = [];
-  for (let i in req.order.products) {
+  for (let i in order.products) {
     let obj = {
-      name: req.order.products[i].name,
-      amount: req.order.products[i].price * 100,
-      currency: "usd",
-      quantity: req.order.products[i].quantity,
-      images: [
-        `${req.protocol}://${req.get("host")}/images/${
-          req.order.products[i].image
-        }`,
-      ],
+      name: order.products[i].name,
+      description: order.products[i].summary,
+      quantity: order.products[i].quantity,
+      price: order.products[i].price,
+      currency: order.total_cost.currency,
     };
     item_Array.push(obj);
   }
 
-  const session = await stripe.checkout.sessions.create({
-    mode: "payment",
-    success_url: `${req.protocol}://${req.get(
-      "host"
-    )}/my-account/?option=orders`,
-    cancel_url: `${req.protocol}://${req.get(
-      "host"
-    )}/my-account/?option=orders`,
-    customer_email: req.customer.email,
-    client_reference_id: "customer-cart-reference-id",
-    line_items: item_Array,
+  const payment_json = {
+    intent: "sale",
+    payer: {
+      payment_method: "paypal",
+    },
+    redirect_urls: {
+      return_url: `${req.protocol}://${req.get("host")}/success`,
+      cancel_url: `${req.protocol}://${req.get("host")}/check-out`,
+    },
+    transactions: [
+      {
+        item_list: {
+          items: item_Array,
+        },
+        amount: {
+          currency: order.total_cost.currency,
+          total: order.total_cost.value,
+          details: {
+            shipping: "0", //transport
+            // subtotal: "10", // sous total
+            shipping_discount: "0.00", //reduction transport
+            insurance: "0.00", // assurance
+            handling_fee: "0.00", // frais de gestion
+            // tax: "0.00", // tax
+          },
+        },
+        // description: "Hat for the best team ever",
+        payment_options: {
+          allowed_payment_method: "IMMEDIATE_PAY",
+        },
+      },
+    ],
+  };
+
+  paypal.payment.create(payment_json, function (error, payment) {
+    if (error) {
+      console.log("Paypal Error", error.response);
+      throw error;
+    } else {
+      for (let i = 0; i < payment.links.length; i++) {
+        if (payment.links[i].rel === "approval_url") {
+          req.order.paymentId = payment.id;
+          Orders.create(req.order);
+          res.status(201).json({
+            status: "success",
+            payment_url: payment.links[i].href,
+          });
+        }
+      }
+    }
   });
-  setOrderData(req.order);
-  res.status(200).json({
-    status: "success",
-    payment_url: session.url,
-  });
-  //   res.redirect(303, session.url);
 });
 
-const setOrderData = async (order) => {
-  console.log("Order Recieved is ", order);
-
+const setSuccessOrderData = async (paymentId, payerId) => {
+  // console.log("Order Recieved is ", order);
+  // const order = await
+  const order = await Orders.findOneAndUpdate(
+    { paymentId: paymentId },
+    { payment: "completed", payerId: payerId, ordered_at: Date.now() },
+    {
+      new: true,
+    }
+  );
   for (let i in order.products) {
     Products.findById(order.products[i]._id, (err, prd) => {
-      // if(err) {
-      //   console.log("Error", err);
-      //    return
-      // }
-      console.log("Product found", prd);
       if (!prd || prd.length == 0) {
         Variants.findById(order.products[i]._id, (err, prd) => {
           prd.stock = prd.stock - order.products[i].quantity;
@@ -218,16 +248,38 @@ const setOrderData = async (order) => {
       }
     });
   }
-  // console.log(order.products)
-  await Orders.create(order);
-  // await OrderProducts.create(OrderData.products);
   await Cart.deleteMany({ customer: order.customer });
 };
 
+exports.paymentSuccess = (req, res) => {
+  var paymentId = req.query.paymentId;
+  var payerId = { payer_id: req.query.PayerID };
+
+  paypal.payment.execute(paymentId, payerId, function (error, payment) {
+    if (error) {
+      console.error(JSON.stringify(error));
+    } else {
+      if (payment.state == "approved") {
+        setSuccessOrderData(paymentId, payerId.payer_id);
+        res.status(201).json({
+          status: "success",
+          payment: payment,
+        });
+      } else {
+        res.status(400).json({
+          status: "payment not successful",
+          payment: {},
+        });
+      }
+    }
+  });
+};
+
 exports.getMyOrders = catchAsync(async (req, res) => {
-  const doc = await Orders.find({ customer: req.customer._id }).sort(
-    "-ordered_at"
-  );
+  const doc = await Orders.find({
+    customer: req.customer._id,
+    payment: "completed",
+  }).sort("-ordered_at");
 
   res.status(200).json({
     status: "success",

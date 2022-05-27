@@ -22,7 +22,14 @@ router.get("/product/:id/variant", ProductController.getVariant);
 router.get("/category/:id", CategoryController.getCategory);
 router.get("/reviews/:productId", ReviewController.getAllReview);
 router.route("/workshop/:type").get(WorkshopController.getClientWorkshop);
-router.route("/workshop").post(WorkshopController.createParticipant);
+router
+  .route("/workshop")
+  .post(
+    WorkshopController.createParticipantData,
+    WorkshopController.getParticipantSession
+  );
+
+router.route("/workshop-success").get(WorkshopController.paymentSuccess);
 
 router.route("/contact-us").post(ContactUsController.createContactUs);
 // Protect Rest all routes

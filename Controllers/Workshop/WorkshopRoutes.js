@@ -12,10 +12,16 @@ router
     WorkshopController.createWorkshop
   );
 
-router.route("/:type").get(WorkshopController.getAllWorkshops);
+router.route("/:type").get((req, res, next) => {
+  req.body.for = "workshop";
+  next();
+}, WorkshopController.getAllWorkshops);
 router
   .route("/:id")
-  .get(WorkshopController.getWorkshop)
+  .get((req, res, next) => {
+    req.body.for = "workshop";
+    next();
+  }, WorkshopController.getWorkshop)
   .patch(
     WorkshopController.uploadWorkshopImages,
     WorkshopController.resizeWorkshopImages,
@@ -35,10 +41,7 @@ router
   .route("/:id/images/:image")
   .delete(WorkshopController.removeWorkshopImage);
 
-router
-  .route("/participants")
-  .post(WorkshopController.createParticipant)
-  .get(WorkshopController.getAllParticipants);
+router.route("/participants").get(WorkshopController.getAllParticipants);
 router
   .route("/participants/:id")
   .get(WorkshopController.getParticipant)

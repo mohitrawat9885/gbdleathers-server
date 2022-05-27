@@ -1,37 +1,43 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const OrderSchema = new mongoose.Schema(
   {
     products: {
       type: Array,
-      required: [true, 'Order must have Product/Products'],
+      required: [true, "Order must have Product/Products"],
     },
     customer: {
       type: mongoose.Schema.ObjectId,
-      ref: 'Customers',
-      required: [true, 'Order must have customer!'],
+      ref: "Customers",
+      required: [true, "Order must have customer!"],
     },
     customer_detail: {
       type: Object,
     },
     address: {
       type: Object,
-      required: [true, 'Order must have Address.'],
+      required: [true, "Order must have Address."],
     },
     status: {
       type: String,
-      required: [true, 'Order should have some status'],
+      required: [true, "Order should have some status"],
       enum: {
-        values: ['ordered', 'pending', 'canceled', 'completed'],
+        values: ["ordered", "pending", "canceled", "completed"],
       },
     },
     payment: {
       type: String,
-      required: [true, 'Order should have payment status'],
+      required: [true, "Order should have payment status"],
       enum: {
-        values: ['cod', 'online'],
-        message: 'Order should be either cod or online',
+        values: ["pending", "completed"],
+        message: "Order should be either pending or completed!",
       },
+    },
+    paymentId: {
+      type: String,
+    },
+    payerId: {
+      type: String,
     },
     ordered_at: {
       type: Date,
@@ -58,6 +64,6 @@ const OrderSchema = new mongoose.Schema(
 //   localField: '_id',
 // });
 
-const Orders = mongoose.model('Orders', OrderSchema);
+const Orders = mongoose.model("Orders", OrderSchema);
 
 module.exports = Orders;

@@ -1,11 +1,14 @@
-const express = require('express');
-const OrderController = require('./OrderController');
+const express = require("express");
+const OrderController = require("./OrderController");
 
 const router = express.Router();
 
-router.route('/').get(OrderController.getAllOrders);
+router.route("/").get((req, res, next) => {
+  req.body.for = "orders";
+  next();
+}, OrderController.getAllOrders);
 router
-  .route('/:id')
+  .route("/:id")
   .get(OrderController.getOrder)
   .patch(OrderController.updateOrder)
   .delete(OrderController.deleteOrder);

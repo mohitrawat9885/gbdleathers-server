@@ -64,7 +64,12 @@ exports.getOne = (Model, popOptions) =>
     if (!doc) {
       return next(new AppError("No Doc found with that ID", 404));
     }
-
+    if (req.body.for === "workshop") {
+      doc.participants = doc.participants.filter((p) => {
+        if (p.payment === "completed") return true;
+        return false;
+      });
+    }
     res.status(200).json({
       status: "success",
       data: doc,
@@ -119,6 +124,11 @@ exports.getAll = (Model, popOptions) =>
     }
 
     if (popOptions) query.populate(popOptions);
+    if (req.body.for === "orders") {
+      if (req.query.status && req.query.status !== "all") {
+        query = query.find({ payment: "completed" });
+      }
+    }
 
     let doc = await query;
     if (req.body.for === "cart") {
@@ -129,21 +139,15 @@ exports.getAll = (Model, popOptions) =>
           await Cart.findByIdAndDelete(d._id);
         }
       });
-      // console.log(doc);
-      // for (let i = 0; i < doc.length; i++) {
-
-      //   // console.log(doc[i].product, Object.keys(doc[i]).length);
-      //   // if (!doc[i].product || !doc[i].product._id) {
-      //   //   // console.log(doc[i]);
-      //   //   // await Cart.deleteOne({ _id: doc._id, customer: req.customer.id });
-      //   //   continue;
-      //   // }
-      //   // newDoc.push(doc[i]);
-      // }
-      // doc = newDoc;
-      // console.log(req.customer);
     }
-
+    if (req.body.for === "workshop") {
+      for (let i = 0; i < doc.length; i++) {
+        doc[i].participants = doc[i].participants.filter((p) => {
+          if (p.payment === "completed") return true;
+          return false;
+        });
+      }
+    }
     res.status(201).json({
       status: "success",
       result: doc.length,

@@ -21,6 +21,28 @@ const ParticipantSchema = new mongoose.Schema(
       ref: "Workshops",
       required: [true, "Workshop is missing. Please provide one workshop!"],
     },
+    payment: {
+      type: String,
+      required: [true, "Workshop should have payment status"],
+      enum: {
+        values: ["pending", "completed"],
+        message: "Workshop payment should be either pending or completed!",
+      },
+    },
+    paymentId: {
+      type: String,
+    },
+    payerId: {
+      type: String,
+    },
+    total_cost: {
+      value: {
+        type: mongoose.SchemaTypes.Decimal128,
+      },
+      currency: {
+        type: String,
+      },
+    },
     created_at: {
       type: Date,
       default: Date.now,
@@ -46,6 +68,11 @@ ParticipantSchema.pre("save", function (next) {
   this.slug = slugify(this.name, { lower: true });
   next();
 });
+
+// ParticipantSchema.pre(/^find/, function (next) {
+//   this.find({ payment: "completed" });
+//   next();
+// });
 
 const Participants = mongoose.model("Participants", ParticipantSchema);
 
