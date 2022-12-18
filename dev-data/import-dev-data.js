@@ -12,7 +12,7 @@ const DB = process.env.DATABASE.replace(
   process.env.DATABASE_PASSWORD
 );
 
-mongoose.connect(process.env.DATABASE_LOCAL).then(() => console.log('Database Connected'));
+mongoose.connect(DB).then(() => console.log('Database Connected'));
 
 // READ JSON FILE
 
