@@ -26,37 +26,38 @@ mongoose.connect(DB).then(() => {
 
 const PORT = process.env.PORT;
 let server;
-if (process.env.NODE_ENV === "production") {
-  const privateKey = fs.readFileSync(
-    "/etc/letsencrypt/live/gbdleathers.com/privkey.pem",
-    "utf8"
-  );
-  const certificate = fs.readFileSync(
-    "/etc/letsencrypt/live/gbdleathers.com/cert.pem",
-    "utf8"
-  );
-  const ca = fs.readFileSync(
-    "/etc/letsencrypt/live/gbdleathers.com/fullchain.pem",
-    "utf8"
-  );
-  const credentials = {
-    key: privateKey,
-    cert: certificate,
-    ca: ca,
-  };
+// if (process.env.NODE_ENV === "production") {
+//   const privateKey = fs.readFileSync(
+//     "/etc/letsencrypt/live/gbdleathers.com/privkey.pem",
+//     "utf8"
+//   );
+//   const certificate = fs.readFileSync(
+//     "/etc/letsencrypt/live/gbdleathers.com/cert.pem",
+//     "utf8"
+//   );
+//   const ca = fs.readFileSync(
+//     "/etc/letsencrypt/live/gbdleathers.com/fullchain.pem",
+//     "utf8"
+//   );
+//   const credentials = {
+//     key: privateKey,
+//     cert: certificate,
+//     ca: ca,
+//   };
 
-  server = https.createServer(credentials, app).listen(443, () => {
-    console.log("HTTPS Server running on port 443");
-  });
-  server = http
-    .createServer(function (req, res) {
-      res.writeHead(301, {
-        Location: "https://" + req.headers["host"] + req.url,
-      });
-      res.end();
-    })
-    .listen(40);
-} else if (process.env.NODE_ENV !== "development") {
+//   server = https.createServer(credentials, app).listen(443, () => {
+//     console.log("HTTPS Server running on port 443");
+//   });
+//   server = http
+//     .createServer(function (req, res) {
+//       res.writeHead(301, {
+//         Location: "https://" + req.headers["host"] + req.url,
+//       });
+//       res.end();
+//     })
+//     .listen(40);
+// } else
+  if (process.env.NODE_ENV !== "development") {
   server = app.listen(PORT, () => console.log(`Listening at Port ${PORT}`));
 } else {
   server = app.listen(PORT, () => console.log(`Listening at Port ${PORT}`));
